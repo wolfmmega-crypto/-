@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1B2116" />
+  <title>مجلسنا | ألعاب الديوانية الرقمية</title>
+
+  <!-- Arabic Typography: Cairo & Tajawal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Cairo', 'sans-serif'],
+            body: ['Tajawal', 'sans-serif'],
+          },
+          colors: {
+            majlis: {
+              bg: '#1B2116',
+              surface: '#242C1E',
+              elevated: '#2E3826',
+              wood: '#5C3D28',
+              woodDark: '#3E2718',
+              gold: '#C9A87C',
+              goldLight: '#DFC39D',
+              goldDark: '#9E7D52',
+              emerald: '#10B981',
+              crimson: '#DC2626',
+              ink: '#F5F2EB',
+              muted: '#A8B09E'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    :root {
+      --bg-canvas: #1B2116;
+      --bg-surface: #242C1E;
+      --bg-elevated: #2E3826;
+      --accent-gold: #C9A87C;
+      --accent-gold-bright: #E2C6A0;
+      --accent-wood: #5C3D28;
+      --accent-emerald: #10B981;
+      --border-subtle: rgba(201, 168, 124, 0.22);
+      --border-strong: rgba(201, 168, 124, 0.48);
+
+      --duration-quick: 150ms;
+      --duration-fast: 250ms;
+      --duration-medium: 350ms;
+      --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-canvas);
+      color: #F5F2EB;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100dvh;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(var(--safe-bottom) + 1.5rem);
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .diwaniya-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url('watermarked_img_5539753144318995062.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+      filter: contrast(1.08) saturate(0.9);
+      pointer-events: none;
+    }
+
+    .diwaniya-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(201, 168, 124, 0.08) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(27, 33, 22, 0.88) 0%, rgba(27, 33, 22, 0.96) 55%, #1B2116 100%);
+      pointer-events: none;
+    }
+
+    .sadu-divider {
+      height: 6px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #C9A87C 0px,
+        #C9A87C 8px,
+        #5C3D28 8px,
+        #5C3D28 16px,
+        #1B2116 16px,
+        #1B2116 20px
+      );
+      opacity: 0.55;
+    }
+
+    .t-surface {
+      background: linear-gradient(180deg, rgba(46, 56, 38, 0.88) 0%, rgba(36, 44, 30, 0.95) 100%);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(226, 198, 160, 0.12);
+      backdrop-filter: blur(12px);
+    }
+
+    .t-wood-badge {
+      background: linear-gradient(145deg, #6B472F 0%, #4A301E 100%);
+      border: 1px solid rgba(201, 168, 124, 0.45);
+      box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 232, 200, 0.18);
+    }
+
+    .t-btn {
+      min-height: 48px;
+      transition:
+        transform var(--duration-quick) var(--ease-smooth-out),
+        background-color var(--duration-quick) var(--ease-smooth-out),
+        border-color var(--duration-quick) var(--ease-smooth-out),
+        box-shadow var(--duration-quick) var(--ease-smooth-out);
+      will-change: transform;
+    }
+    .t-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+    .t-btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .t-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    @keyframes panelReveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+        filter: blur(2px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+    .t-panel-enter {
+      animation: panelReveal var(--duration-fast) var(--ease-smooth-out) forwards;
+    }
+
+    @keyframes errorShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .is-shaking {
+      animation: errorShake 320ms var(--ease-smooth-out);
+      border-color: #DC2626 !important;
+    }
+
+    @keyframes toastRise {
+      from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.97);
+        filter: blur(2px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+    .t-toast {
+      animation: toastRise var(--duration-fast) var(--ease-smooth-out) forwards;
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #1B2116; }
+    ::-webkit-scrollbar-thumb { background: #5C3D28; border-radius: 9999px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#C9A87C] selection:text-[#1B2116]">
+
+  <div class="diwaniya-backdrop" aria-hidden="true"></div>
+  <div class="diwaniya-vignette" aria-hidden="true"></div>
+
+  <!-- Top Header Navigation -->
+  <header class="sticky top-0 z-40 bg-[#1B2116]/90 backdrop-blur-md border-b border-[#C9A87C]/20">
+    <div class="max-w-2xl mx-auto px-4 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <!-- Home Button (زر البيت) -->
+        <button id="homeBtn" type="button" aria-label="الرئيسية" class="t-btn w-11 h-11 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/40 flex items-center justify-center text-[#E2C6A0] shadow-md">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </button>
+
+        <div class="w-11 h-11 rounded-xl overflow-hidden border border-[#C9A87C]/50 bg-[#242C1E] shrink-0 shadow-md">
+          <img
+            src="IMG_6267.jpeg"
+            alt="شعار مجلسنا"
+            class="w-full h-full object-cover scale-125"
+            onerror="this.style.display='none'"
+          />
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-heading font-black text-xl leading-none text-[#E2C6A0]">مجلسنا</h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#5C3D28]/70 text-[#E2C6A0] border border-[#C9A87C]/30">الديوانية</span>
+          </div>
+          <p id="syncBadge" class="text-[11px] text-emerald-400 flex items-center gap-1.5 mt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+            <span id="syncText">متصل بالديوانية</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div id="headerRoomPill" class="hidden px-3 py-1.5 rounded-xl bg-[#242C1E] border border-[#C9A87C]/40 text-xs font-bold text-[#E2C6A0] tracking-wider">
+          غرفة: <span id="headerRoomCode" class="font-heading font-black">----</span>
+        </div>
+
+        <button id="muteToggleBtn" type="button" aria-label="تبديل الصوت" class="t-btn w-11 h-11 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/30 flex items-center justify-center text-[#C9A87C]">
+          <svg id="soundOnIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <svg id="soundOffIcon" class="w-5 h-5 text-[#A8B09E] hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+
+        <button id="leaveRoomBtn" type="button" aria-label="مغادرة الديوانية" class="hidden t-btn px-3 h-11 rounded-xl bg-red-950/60 hover:bg-red-900/70 border border-red-500/40 text-red-300 text-xs font-bold">
+          خروج
+        </button>
+      </div>
+    </div>
+    <div class="sadu-divider"></div>
+  </header>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" role="status" aria-live="polite" class="fixed top-20 inset-x-4 z-50 pointer-events-none flex flex-col items-center gap-2"></div>
+
+  <!-- Main Workspace -->
+  <main id="appRoot" class="max-w-2xl mx-auto px-4 pt-5 pb-12">
+
+    <!-- VIEW 1: ONBOARDING -->
+    <section id="viewOnboarding" class="t-panel-enter space-y-5">
+      <div class="relative rounded-2xl overflow-hidden border border-[#C9A87C]/40 shadow-2xl bg-[#1B2116]">
+        <div class="aspect-[16/9] sm:aspect-[21/10] w-full overflow-hidden relative">
+          <img src="IMG_6267.jpeg" alt="مجلسنا" class="w-full h-full object-cover object-center" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1B2116] via-transparent to-black/25"></div>
+        </div>
+        <div class="px-5 pb-5 -mt-6 relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-md bg-[#5C3D28] border border-[#C9A87C]/40 text-[11px] font-bold text-[#E2C6A0]">
+              تجمع الربع المباشر
+            </span>
+            <h2 class="font-heading text-xl sm:text-2xl font-black text-white mt-1">ألعاب الديوانية الرقمية</h2>
+          </div>
+          <p class="text-xs text-[#A8B09E]">ادخل برمز الغرفة أو امسح الباركود</p>
+        </div>
+      </div>
+
+      <div class="t-surface rounded-2xl p-5 sm:p-6 space-y-5">
+        <div class="space-y-2">
+          <label for="nicknameInput" class="block text-sm font-bold text-[#E2C6A0]">
+            الاسم أو اللقب بالديوانية <span class="text-amber-400">*</span>
+          </label>
+          <input
+            id="nicknameInput"
+            type="text"
+            maxlength="18"
+            autocomplete="off"
+            placeholder="مثال: بوجاسم، النوخذه، راعي الكرك..."
+            class="w-full min-h-[52px] px-4 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 focus:border-[#C9A87C] focus:ring-2 focus:ring-[#C9A87C]/25 text-white placeholder-[#A8B09E]/60 outline-none text-base font-medium transition-colors"
+          />
+          <p id="nicknameError" class="hidden text-xs text-red-400 font-bold">يرجى إدخال لقبك أولاً (حرفين على الأقل)</p>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm font-bold text-[#E2C6A0]">اختر شعارك بالديوانية أو ارفع صورتك</span>
+            <label for="photoUploadInput" class="t-btn cursor-pointer inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#5C3D28] hover:bg-[#6E4930] border border-[#C9A87C]/45 text-[#F5F2EB] text-xs font-bold min-h-[42px]">
+              <svg class="w-4 h-4 text-[#E2C6A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <span>صورة شخصية</span>
+              <input id="photoUploadInput" type="file" accept="image/*" capture="user" class="hidden" />
+            </label>
+          </div>
+
+          <div id="customPhotoPreviewBox" class="hidden items-center justify-between p-3 rounded-xl bg-[#161B12] border border-[#C9A87C]/60">
+            <div class="flex items-center gap-3">
+              <img id="customPhotoImg" src="" alt="صورتك" class="w-12 h-12 rounded-full object-cover border-2 border-[#C9A87C]" />
+              <span class="text-sm font-bold text-[#E2C6A0]">تم اعتماد صورتك الشخصية</span>
+            </div>
+            <button id="clearPhotoBtn" type="button" class="px-3 py-1.5 rounded-lg bg-[#242C1E] text-xs text-[#A8B09E] hover:text-white border border-[#C9A87C]/25">إلغاء</button>
+          </div>
+
+          <div id="avatarGrid" class="grid grid-cols-4 gap-2.5" role="radiogroup" aria-label="اختر شعار اللاعب"></div>
+        </div>
+
+        <div class="space-y-4 pt-3 border-t border-[#C9A87C]/20">
+          <button id="createRoomBtn" type="button" class="t-btn w-full py-3.5 px-5 rounded-xl bg-gradient-to-l from-[#C9A87C] to-[#B08D5E] hover:from-[#DFC39D] hover:to-[#C9A87C] text-[#1B2116] font-heading font-black text-lg shadow-lg flex items-center justify-center gap-2.5">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>إنشاء ديوانية جديدة</span>
+          </button>
+
+          <div class="relative flex py-0.5 items-center">
+            <div class="flex-grow border-t border-[#C9A87C]/20"></div>
+            <span class="flex-shrink mx-3 text-xs text-[#A8B09E] font-bold">أو الانضمام برمز الغرفة</span>
+            <div class="flex-grow border-t border-[#C9A87C]/20"></div>
+          </div>
+
+          <div class="flex gap-2.5">
+            <label for="roomCodeInput" class="sr-only">رمز الغرفة</label>
+            <input
+              id="roomCodeInput"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="4"
+              placeholder="رمز 4 أرقام"
+              class="w-36 sm:w-44 min-h-[52px] px-4 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 focus:border-emerald-400 text-center font-heading font-extrabold text-xl tracking-[0.25em] text-emerald-400 placeholder-[#A8B09E]/50 placeholder:tracking-normal placeholder:text-sm outline-none"
+            />
+            <button id="joinRoomBtn" type="button" class="t-btn flex-1 py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 border border-emerald-400/40 text-white font-heading font-extrabold text-base shadow-lg">
+              دخول الغرفة
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-surface rounded-2xl overflow-hidden">
+        <div class="p-4 border-b border-[#C9A87C]/20 flex items-center justify-between">
+          <h3 class="font-heading font-extrabold text-base text-[#E2C6A0]">ألعاب مجلسنا التفاعلية</h3>
+          <span class="text-xs text-[#A8B09E]">4 أنماط لعب جماعية</span>
+        </div>
+        <div class="aspect-[16/9] w-full overflow-hidden bg-[#161B12]">
+          <img src="IMG_6268.jpeg" alt="ألعاب مجلسنا" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: LOBBY -->
+    <section id="viewLobby" class="hidden t-panel-enter space-y-5">
+      <div class="t-surface rounded-2xl p-5">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="text-center sm:text-right space-y-1.5">
+            <span class="text-xs font-bold text-[#A8B09E]">رمز الديوانية المباشر</span>
+            <div id="lobbyCodeDisplay" class="font-heading text-4xl font-black tracking-[0.22em] text-[#E2C6A0] select-all">0000</div>
+            <p class="text-xs text-[#A8B09E]">امسح الباركود بكاميرا الجوال أو انسخ الرابط</p>
+            <div class="pt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+              <button id="copyLinkBtn" type="button" class="t-btn px-4 py-2.5 rounded-xl bg-[#5C3D28] hover:bg-[#6E4930] border border-[#C9A87C]/45 text-white text-sm font-bold flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#E2C6A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>نسخ الرابط</span>
+              </button>
+              <button id="addBotBtn" type="button" class="t-btn px-3.5 py-2.5 rounded-xl bg-[#161B12] hover:bg-[#2E3826] border border-[#C9A87C]/35 text-[#E2C6A0] text-xs font-bold">
+                + إضافة لاعب تجريبي
+              </button>
+            </div>
+          </div>
+
+          <div class="p-3 bg-[#F5F2EB] rounded-2xl border-2 border-[#C9A87C] shadow-lg shrink-0">
+            <div id="qrcodeBox" class="w-32 h-32 flex items-center justify-center"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-surface rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3.5">
+          <h3 class="font-heading font-bold text-lg text-white">المتواجدون في المجلس (<span id="playerCount">1</span>)</h3>
+          <button id="toggleReadyBtn" type="button" class="t-btn px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 border border-emerald-400/40 text-white text-sm font-bold">
+            جاهز للعب
+          </button>
+        </div>
+        <div id="lobbyPlayersList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+      </div>
+
+      <div id="hostGameSelector" class="t-surface rounded-2xl p-5 space-y-4">
+        <div>
+          <h3 class="font-heading font-bold text-lg text-[#E2C6A0]">اختر اللعبة (تحكم المضيف)</h3>
+          <p class="text-xs text-[#A8B09E]">النظام يولّد التحديات تلقائياً بدون تكرار</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+          <button type="button" data-select-game="telepathy" class="game-mode-card t-btn text-right p-3 rounded-xl bg-[#161B12] border-2 border-[#C9A87C] flex items-center justify-between gap-3.5">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <img src="watermarked_img_12681219483217123749.jpg" alt="على الطاير" class="w-16 h-16 rounded-xl object-cover border border-[#C9A87C]/40 shrink-0" />
+              <div class="min-w-0">
+                <span class="font-heading font-extrabold text-base text-white block">1. على الطاير</span>
+                <p class="text-xs text-[#A8B09E] mt-0.5 line-clamp-2">تخاطر الكلمة الواحدة: تلميح بكلمة وحدة والربع يخمنون مع زر كشف الغش.</p>
+              </div>
+            </div>
+            <span class="mode-check w-7 h-7 rounded-full bg-[#C9A87C] text-[#1B2116] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+
+          <button type="button" data-select-game="password" class="game-mode-card t-btn text-right p-3 rounded-xl bg-[#161B12] border-2 border-[#C9A87C]/20 hover:border-[#C9A87C]/50 flex items-center justify-between gap-3.5">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <img src="watermarked_img_9403813343663088498.jpg" alt="فكها لا تفكك" class="w-16 h-16 rounded-xl object-cover border border-[#C9A87C]/40 shrink-0" />
+              <div class="min-w-0">
+                <span class="font-heading font-extrabold text-base text-white block">2. فكّها لا تفكك</span>
+                <p class="text-xs text-[#A8B09E] mt-0.5 line-clamp-2">ألغاز خليجية ذكية وتحدي كلمة السر من 5 حروف بـ 6 محاولات.</p>
+              </div>
+            </div>
+            <span class="mode-check hidden w-7 h-7 rounded-full bg-[#C9A87C] text-[#1B2116] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+
+          <button type="button" data-select-game="detective" class="game-mode-card t-btn text-right p-3 rounded-xl bg-[#161B12] border-2 border-[#C9A87C]/20 hover:border-[#C9A87C]/50 flex items-center justify-between gap-3.5">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <img src="watermarked_img_5655190359981626397.jpg" alt="من الخافي" class="w-16 h-16 rounded-xl object-cover border border-[#C9A87C]/40 shrink-0" />
+              <div class="min-w-0">
+                <span class="font-heading font-extrabold text-base text-white block">3. من الخافي؟</span>
+                <p class="text-xs text-[#A8B09E] mt-0.5 line-clamp-2">شات مجهول بأسماء مستعارة.. اكشف ربعك من أسلوب كتابتهم!</p>
+              </div>
+            </div>
+            <span class="mode-check hidden w-7 h-7 rounded-full bg-[#C9A87C] text-[#1B2116] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+
+          <button type="button" data-select-game="block" class="game-mode-card t-btn text-right p-3 rounded-xl bg-[#161B12] border-2 border-[#C9A87C]/20 hover:border-[#C9A87C]/50 flex items-center justify-between gap-3.5">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-16 h-16 rounded-xl t-wood-badge flex items-center justify-center shrink-0 text-[#E2C6A0]">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <div class="min-w-0">
+                <span class="font-heading font-extrabold text-base text-white block">4. الصراحة ولا.. صكة بلوك؟</span>
+                <p class="text-xs text-[#A8B09E] mt-0.5 line-clamp-2">أسئلة ديوانية محرجة: إما تجاوب بصراحة أو تاخذ بلوك!</p>
+              </div>
+            </div>
+            <span class="mode-check hidden w-7 h-7 rounded-full bg-[#C9A87C] text-[#1B2116] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+
+          <button type="button" data-select-game="tournament" class="game-mode-card t-btn text-right p-3.5 rounded-xl bg-[#161B12] border-2 border-[#C9A87C]/20 hover:border-[#C9A87C]/50 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-emerald-950 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+              </div>
+              <div>
+                <span class="font-heading font-extrabold text-base text-emerald-400 block">بطولة الديوانية الشاملة</span>
+                <p class="text-xs text-[#A8B09E]">جولات متتالية من جميع الألعاب وتوزيع الألقاب.</p>
+              </div>
+            </div>
+            <span class="mode-check hidden w-7 h-7 rounded-full bg-[#C9A87C] text-[#1B2116] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+        </div>
+
+        <button id="startGameBtn" type="button" class="t-btn w-full py-4 rounded-xl bg-gradient-to-l from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 border border-emerald-400/40 text-white font-heading font-black text-lg shadow-xl">
+          ابدأ الجولة الآن
+        </button>
+      </div>
+
+      <div id="guestWaitingBanner" class="hidden t-surface rounded-2xl p-5 text-center space-y-2">
+        <p class="font-heading font-bold text-[#E2C6A0] text-lg">بانتظار راعي الديوانية يبدأ الجولة...</p>
+        <p class="text-xs text-[#A8B09E]">اللعبة المختارة: <span id="guestSelectedModeLabel" class="font-bold text-white">على الطاير</span></p>
+      </div>
+    </section>
+
+    <!-- VIEW 3: GAME ARENA -->
+    <section id="viewGame" class="hidden t-panel-enter space-y-4">
+      <div class="t-surface rounded-2xl p-3.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <img id="hudGameThumb" src="watermarked_img_12681219483217123749.jpg" alt="" class="w-10 h-10 rounded-lg object-cover border border-[#C9A87C]/40" />
+          <div>
+            <span id="gameBadgeTitle" class="text-xs font-extrabold text-[#E2C6A0] block">على الطاير</span>
+            <span id="roundIndicator" class="font-heading font-bold text-xs text-[#A8B09E]">الجولة 1 / 3</span>
+          </div>
+        </div>
+
+        <div id="timerBox" class="px-4 py-1.5 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#C9A87C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span id="timerDisplay" class="font-heading font-black text-xl text-white tabular-nums">60</span>
+        </div>
+
+        <div class="text-left">
+          <span class="text-[11px] text-[#A8B09E] block">نقاطك</span>
+          <span id="myScoreDisplay" class="font-heading font-extrabold text-lg text-emerald-400 tabular-nums">0</span>
+        </div>
+      </div>
+
+      <!-- Game 1: على الطاير -->
+      <div id="arenaTelepathy" class="hidden space-y-4">
+        <div class="t-surface rounded-2xl p-5 text-center space-y-3">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#161B12] border border-[#C9A87C]/30 text-xs text-[#A8B09E]">
+            <span>المُلمّح في هذه الجولة:</span>
+            <strong id="telepathyGiverName" class="text-[#E2C6A0]">---</strong>
+          </div>
+
+          <div id="telepathySecretBox" class="hidden p-4 rounded-2xl t-wood-badge">
+            <span class="text-xs font-bold text-[#E2C6A0] block mb-1">الكلمة السرية (ممنوع تنطقها أو تكتب جزء منها)</span>
+            <div id="telepathySecretWord" class="font-heading text-3xl sm:text-4xl font-black text-white tracking-wide">مجبوس</div>
+            <span id="telepathyCategoryTag" class="inline-block mt-2 px-2.5 py-0.5 rounded-md bg-[#1B2116]/80 text-xs text-[#E2C6A0]">التصنيف: أكلات</span>
+          </div>
+
+          <div id="telepathyGuesserBox" class="hidden p-4 rounded-2xl bg-[#161B12] border border-[#C9A87C]/25">
+            <span class="text-xs text-[#A8B09E] block mb-1">خمّن الكلمة السرية من تلميح زميلك</span>
+            <div id="telepathyLetterSlots" class="font-heading text-2xl sm:text-3xl font-black text-[#E2C6A0] tracking-[0.25em] py-1">_ _ _ _ _</div>
+            <span id="telepathyGuesserCategory" class="text-xs text-[#A8B09E]">التصنيف: ---</span>
+          </div>
+
+          <div id="activeClueDisplayBox" class="hidden pt-2">
+            <span class="text-xs text-emerald-400 font-bold block mb-1">تلميح المُلمّح:</span>
+            <div id="activeClueWord" class="inline-block px-6 py-2.5 rounded-2xl bg-emerald-950/70 border border-emerald-500/50 font-heading text-2xl font-black text-emerald-300">
+              ---
+            </div>
+          </div>
+        </div>
+
+        <div id="clueGiverControls" class="hidden t-surface rounded-2xl p-4 space-y-3">
+          <label for="clueInput" class="block text-sm font-bold text-[#F5F2EB]">اكتب تلميحاً من <span class="text-[#E2C6A0]">كلمة واحدة فقط</span> (بدون مسافات أو أرقام):</label>
+          <div class="flex gap-2">
+            <input
+              id="clueInput"
+              type="text"
+              maxlength="20"
+              autocomplete="off"
+              placeholder="كلمة وحدة بس..."
+              class="flex-1 min-h-[50px] px-4 rounded-xl bg-[#161B12] border border-[#C9A87C]/40 focus:border-[#C9A87C] text-white font-bold outline-none"
+            />
+            <button id="submitClueBtn" type="button" class="t-btn px-5 rounded-xl bg-[#C9A87C] hover:bg-[#DFC39D] text-[#1B2116] font-heading font-extrabold">
+              إرسال
+            </button>
+          </div>
+          <p id="clueValidationMsg" class="hidden text-xs text-red-400 font-bold"></p>
+        </div>
+
+        <div id="guesserControls" class="hidden t-surface rounded-2xl p-4 space-y-3">
+          <div id="freeGuessContainer" class="flex gap-2">
+            <label for="guessInput" class="sr-only">اكتب تخمينك</label>
+            <input
+              id="guessInput"
+              type="text"
+              maxlength="25"
+              autocomplete="off"
+              placeholder="شنو الكلمة السرية؟..."
+              class="flex-1 min-h-[50px] px-4 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 focus:border-emerald-400 text-white font-bold outline-none"
+            />
+            <button id="submitGuessBtn" type="button" class="t-btn px-5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-heading font-extrabold">
+              خمّن
+            </button>
+          </div>
+
+          <div id="telepathyMcqContainer" class="hidden grid grid-cols-2 gap-2.5"></div>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-[#C9A87C]/20">
+            <button id="telepathyHintLetterBtn" type="button" class="t-btn p-2.5 rounded-xl bg-[#161B12] hover:bg-[#2E3826] border border-[#C9A87C]/30 text-xs font-bold text-[#E2C6A0] flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>كشف حرف</span>
+            </button>
+            <button id="telepathyMcqBtn" type="button" class="t-btn p-2.5 rounded-xl bg-[#161B12] hover:bg-[#2E3826] border border-[#C9A87C]/30 text-xs font-bold text-sky-300 flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>4 خيارات</span>
+            </button>
+            <button id="cheatReportBtn" type="button" class="t-btn p-2.5 rounded-xl bg-red-950/60 hover:bg-red-900/70 border border-red-500/40 text-xs font-bold text-red-300 flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>غش! (<span id="cheatVotesCount">0</span>)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="t-surface rounded-2xl p-4">
+          <h4 class="text-xs font-bold text-[#A8B09E] mb-2">محاولات الربع المباشرة:</h4>
+          <div id="telepathyFeed" class="space-y-1.5 max-h-44 overflow-y-auto text-sm"></div>
+        </div>
+      </div>
+
+      <!-- Game 2: فكها لا تفكك -->
+      <div id="arenaPassword" class="hidden space-y-4">
+        <div class="grid grid-cols-3 gap-2">
+          <button id="pwLifelineEliminate" type="button" class="t-btn p-2.5 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/35 text-xs font-bold text-[#E2C6A0]">
+            حذف خاطئ
+          </button>
+          <button id="pwLifelineReveal" type="button" class="t-btn p-2.5 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/35 text-xs font-bold text-emerald-400">
+            كشف حرف
+          </button>
+          <button id="pwLifelineTime" type="button" class="t-btn p-2.5 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/35 text-xs font-bold text-sky-300">
+            +15 ثانية
+          </button>
+        </div>
+
+        <div id="passwordRiddleBox" class="hidden t-surface rounded-2xl p-5 space-y-4">
+          <div class="text-center space-y-2">
+            <span class="px-3 py-1 rounded-full bg-[#5C3D28] text-[#E2C6A0] text-xs font-bold">لغز الديوانية الذكي</span>
+            <h3 id="riddleQuestionText" class="font-heading text-xl sm:text-2xl font-extrabold text-white leading-relaxed pt-2">---</h3>
+            <p id="riddleHintText" class="hidden text-xs text-emerald-400 font-bold"></p>
+          </div>
+          <div id="riddleOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
+        </div>
+
+        <div id="passwordWordleBox" class="hidden t-surface rounded-2xl p-4 space-y-4">
+          <div class="text-center">
+            <span class="px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 text-xs font-bold">كلمة السر (5 حروف — 6 محاولات)</span>
+            <p id="wordleClueBanner" class="text-xs text-[#E2C6A0] mt-2">التلميح: ---</p>
+          </div>
+
+          <div id="wordleGrid" class="grid grid-rows-6 gap-1.5 max-w-[290px] mx-auto"></div>
+          <div id="arabicKeyboard" class="space-y-1.5 pt-2 select-none" dir="rtl"></div>
+        </div>
+      </div>
+
+      <!-- Game 3: من الخافي؟ -->
+      <div id="arenaDetective" class="hidden space-y-4">
+        <div class="t-wood-badge rounded-2xl p-4 text-center space-y-2">
+          <div class="flex items-center justify-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#1B2116]/70 text-[#E2C6A0] text-xs font-bold">سؤال الديوانية</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-[#1B2116]/70 text-xs text-white">هويتك السرية: <strong id="mySecretAlias" class="text-emerald-400">---</strong></span>
+          </div>
+          <h3 id="detectivePromptText" class="font-heading text-lg sm:text-xl font-extrabold text-white leading-snug">---</h3>
+        </div>
+
+        <div id="detectiveChatPhase" class="space-y-3">
+          <div id="detectiveChatMessages" class="bg-[#161B12]/95 border border-[#C9A87C]/30 rounded-2xl p-3.5 h-64 overflow-y-auto space-y-2.5"></div>
+
+          <div class="flex gap-1.5 overflow-x-auto pb-1">
+            <button type="button" data-quick-chat="والله صارت معاي بالضبط" class="shrink-0 px-3 py-1.5 rounded-full bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/30 text-xs text-[#F5F2EB]">والله صارت معاي بالضبط</button>
+            <button type="button" data-quick-chat="عيب عليكم فضحتونا" class="shrink-0 px-3 py-1.5 rounded-full bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/30 text-xs text-[#F5F2EB]">عيب عليكم فضحتونا</button>
+            <button type="button" data-quick-chat="أكيد هذا بوجاسم أعرف أسلوبه" class="shrink-0 px-3 py-1.5 rounded-full bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/30 text-xs text-[#F5F2EB]">أكيد هذا بوجاسم أعرف أسلوبه</button>
+          </div>
+
+          <div class="flex gap-2">
+            <label for="detectiveChatInput" class="sr-only">اكتب رسالتك</label>
+            <input
+              id="detectiveChatInput"
+              type="text"
+              maxlength="120"
+              autocomplete="off"
+              placeholder="اكتب ردك وغيّر أسلوبك..."
+              class="flex-1 min-h-[50px] px-4 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 focus:border-[#C9A87C] text-white text-sm outline-none"
+            />
+            <button id="sendDetectiveChatBtn" type="button" class="t-btn px-5 rounded-xl bg-[#C9A87C] hover:bg-[#DFC39D] text-[#1B2116] font-heading font-extrabold">
+              إرسال
+            </button>
+          </div>
+        </div>
+
+        <div id="detectiveVotePhase" class="hidden t-surface rounded-2xl p-4 space-y-4">
+          <div class="text-center">
+            <h4 class="font-heading font-extrabold text-lg text-[#E2C6A0]">وقت التحقيق: منو ورا كل اسم مستعار؟</h4>
+            <p class="text-xs text-[#A8B09E]">اربط كل شخصية مجهولة باللاعب الحقيقي</p>
+          </div>
+          <div id="detectiveMatchingList" class="space-y-3"></div>
+          <button id="submitDetectiveVotesBtn" type="button" class="t-btn w-full py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-heading font-extrabold text-base">
+            اعتماد التحقيق وكشف الهويات
+          </button>
+        </div>
+      </div>
+
+      <!-- Game 4: الصراحة ولا صكة بلوك -->
+      <div id="arenaBlock" class="hidden space-y-4">
+        <div class="t-wood-badge rounded-2xl p-6 text-center space-y-3">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#1B2116]/80 text-[#E2C6A0] text-xs font-bold">
+            الدور على: <strong id="blockTargetName" class="text-white">---</strong>
+          </span>
+          <h3 id="blockQuestionText" class="font-heading text-xl sm:text-2xl font-black text-white leading-relaxed">---</h3>
+        </div>
+
+        <div id="blockTargetControls" class="hidden t-surface rounded-2xl p-4 space-y-3">
+          <label for="blockAnswerInput" class="block text-sm font-bold text-[#E2C6A0]">اكتب إجابتك بكل صراحة (+100) أو اختر صكة بلوك (-30):</label>
+          <textarea
+            id="blockAnswerInput"
+            rows="2"
+            maxlength="160"
+            placeholder="اكتب اعترافك الصريح هنا..."
+            class="w-full p-3.5 rounded-xl bg-[#161B12] border border-[#C9A87C]/35 focus:border-[#C9A87C] text-white text-sm outline-none"
+          ></textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="submitTruthBtn" type="button" class="t-btn py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-heading font-extrabold text-sm">
+              أجاوب بصراحة (+100)
+            </button>
+            <button id="takeBlockBtn" type="button" class="t-btn py-3 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-200 font-heading font-extrabold text-sm">
+              صكة بلوك (-30)
+            </button>
+          </div>
+        </div>
+
+        <div id="blockSpectatorBanner" class="hidden t-surface rounded-2xl p-4 text-center text-sm text-[#A8B09E]">
+          بانتظار رد اللاعب على السؤال المحرج...
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ROUND SUMMARY & AWARDS -->
+    <section id="viewResults" class="hidden t-panel-enter space-y-5">
+      <div class="t-wood-badge rounded-2xl p-6 text-center space-y-2.5">
+        <span id="resultsBadge" class="inline-block px-3 py-1 rounded-full bg-[#1B2116]/80 text-[#E2C6A0] text-xs font-bold">نتائج الجولة</span>
+        <h2 id="resultsTitle" class="font-heading text-2xl sm:text-3xl font-black text-white">ترتيب الديوانية</h2>
+        <p id="resultsSubtitle" class="text-sm text-[#F5F2EB]/90"></p>
+      </div>
+
+      <div id="awardsGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+      <div class="t-surface rounded-2xl p-5 space-y-3">
+        <h3 class="font-heading font-bold text-base text-[#E2C6A0]">جدول النقاط</h3>
+        <div id="leaderboardList" class="space-y-2.5"></div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <!-- Next Round Button (الجولة التالية) -->
+        <button id="nextRoundBtn" type="button" class="t-btn flex-1 py-4 rounded-xl bg-gradient-to-l from-[#C9A87C] to-[#B08D5E] hover:from-[#DFC39D] hover:to-[#C9A87C] text-[#1B2116] font-heading font-black text-lg shadow-lg">
+          الجولة التالية
+        </button>
+        <button id="backToLobbyBtn" type="button" class="t-btn flex-1 py-4 rounded-xl bg-[#242C1E] hover:bg-[#2E3826] border border-[#C9A87C]/35 text-white font-heading font-extrabold text-base">
+          العودة للديوانية
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FIREBASE & CORE ENGINE SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    function escapeHTML(str) {
+      if (typeof str !== 'string') return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .trim();
+    }
+
+    function normalizeArabic(text) {
+      if (!text) return '';
+      return text
+        .trim()
+        .replace(/[\u064B-\u065F\u0670]/g, '')
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/\s+/g, ' ')
+        .toLowerCase();
+    }
+
+    function generateRoomCode() {
+      return String(Math.floor(1000 + Math.random() * 9000));
+    }
+
+    /* Web Audio Sound Synthesizer */
+    class SoundEngine {
+      constructor() {
+        this.muted = false;
+        this.ctx = null;
+      }
+      ensureCtx() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      }
+      playTone(freq, type = 'sine', duration = 0.12, gainVal = 0.12, delay = 0) {
+        if (this.muted) return;
+        try {
+          this.ensureCtx();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(gainVal, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (_) {}
+      }
+      click() { this.playTone(520, 'triangle', 0.06, 0.08); }
+      tick() { this.playTone(840, 'sine', 0.05, 0.06); }
+      success() {
+        this.playTone(523.25, 'triangle', 0.14, 0.13, 0);
+        this.playTone(659.25, 'triangle', 0.14, 0.13, 0.1);
+        this.playTone(783.99, 'triangle', 0.24, 0.15, 0.2);
+      }
+      wrong() {
+        this.playTone(210, 'sawtooth', 0.18, 0.1, 0);
+        this.playTone(165, 'sawtooth', 0.22, 0.1, 0.14);
+      }
+      cheat() {
+        this.playTone(660, 'square', 0.14, 0.11, 0);
+        this.playTone(440, 'square', 0.14, 0.11, 0.15);
+        this.playTone(660, 'square', 0.18, 0.11, 0.3);
+      }
+      fanfare() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+          this.playTone(f, 'triangle', 0.26, 0.14, idx * 0.11);
+        });
+      }
+    }
+    const sfx = new SoundEngine();
+
+    const EMBLEMS = [
+      { id: 'dallah', label: 'دلة المجلس', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M9 5h6l1 4c2 1 3 3 3 6 0 3.5-2.5 6-7 6s-7-2.5-7-6c0-3 1-5 3-6l1-4z"/><path d="M16 9c2.5 0 4 1.5 4 3.5S18.5 16 16 16"/><path d="M7 10L3 7"/></svg>` },
+      { id: 'falcon', label: 'صقر حر', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L4 9l4 2-2 7 6-3 6 3-2-7 4-2-8-6z"/><circle cx="12" cy="9" r="1.5"/></svg>` },
+      { id: 'key', label: 'مفتاح اللغز', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>` },
+      { id: 'compass', label: 'النوخذه', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>` },
+      { id: 'tent', label: 'راعي بر', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L12 4 3 20z"/><path d="M12 4v16"/><path d="M9 20l3-5 3 5"/></svg>` },
+      { id: 'palm', label: 'سعف ونخيل', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M12 9c-3-3-7-2-8 1"/><path d="M12 9c3-3 7-2 8 1"/><path d="M12 9c-2-4-5-5-7-4"/><path d="M12 9c2-4 5-5 7-4"/></svg>` },
+      { id: 'shield', label: 'راعي فزعة', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>` },
+      { id: 'star', label: 'نجم سهيل', svg: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 14.8 8.8 22 9.5 16.5 14.2 18.2 21.2 12 17.4 5.8 21.2 7.5 14.2 2 9.5 9.2 8.8 12 2"/></svg>` }
+    ];
+
+    function getEmblemSvg(emblemId) {
+      const found = EMBLEMS.find(e => e.id === emblemId) || EMBLEMS[0];
+      return found.svg;
+    }
+
+    const BOT_PROFILES = [
+      { name: 'بوجاسم', avatar: 'dallah' },
+      { name: 'النوخذه', avatar: 'compass' },
+      { name: 'راعي_الكرك', avatar: 'tent' },
+      { name: 'ذيب_البر', avatar: 'falcon' }
+    ];
+
+    const SECRET_ALIASES = [
+      { alias: 'صقر الليل', color: '#E2C6A0' },
+      { alias: 'ذيب البر', color: '#10B981' },
+      { alias: 'الشايب', color: '#38BDF8' },
+      { alias: 'راعي الكرك', color: '#F59E0B' },
+      { alias: 'النوخذه', color: '#A78BFA' },
+      { alias: 'مجهول الديوانية', color: '#FB7185' }
+    ];
+
+    const TELEPATHY_WORDS = [
+      { id: 't1', word: 'مجبوس', cat: 'أكلات كويتية', distractors: ['مشخول', 'مربين', 'برياني'] },
+      { id: 't2', word: 'ديوانية', cat: 'ثقافة ومجتمع', distractors: ['مقلط', 'مجلس', 'خيمة'] },
+      { id: 't3', word: 'كشته', cat: 'طلعات وبر', distractors: ['مخيم', 'شاليه', 'حداق'] },
+      { id: 't4', word: 'قرقاعون', cat: 'تراث ومناسبات', distractors: ['غبقة', 'عيدية', 'فطور'] },
+      { id: 't5', word: 'هريس', cat: 'أكلات رمضانية', distractors: ['جريش', 'تشريبة', 'لقيمات'] }
+    ];
+
+    const SMART_RIDDLES = [
+      { id: 'r1', q: 'شي كل ما خذيت منه يكبر، وكل ما عطيته يصغر.. شنو هو؟', ans: 'الحفرة', options: ['الحفرة', 'العمر', 'الظل', 'البحر'] },
+      { id: 'r2', q: 'يمشي بدون ريول ويبجي بدون عيون.. شنو تتوقع؟', ans: 'الغيم', options: ['الغيم', 'النهر', 'الوقت', 'الهوا'] },
+      { id: 'r3', q: 'له أسنان وايد بس ما يعض ولا ياكل.. شنو هو؟', ans: 'المشط', options: ['المشط', 'المنشار', 'المفتاح', 'التمساح'] }
+    ];
+
+    const WORDLE_WORDS = [
+      { id: 'w1', word: 'مجبوس', hint: 'أشهر أكلة كويتية بالعيش واللحم أو الدياي' },
+      { id: 'w2', word: 'مشخول', hint: 'عيش أبيض مشخول مع حكوكة' },
+      { id: 'w3', word: 'مربين', hint: 'عيش مع ربيان يابس أو طري' }
+    ].filter(item => normalizeArabic(item.word).length === 5);
+
+    const DETECTIVE_PROMPTS = [
+      { id: 'd1', q: 'شنو أغبى شي شريته بحياتك وطار معاشك عليه؟' },
+      { id: 'd2', q: 'موقف محرج صارلك بالبر أو السفر ومحد بالديوانية يدري عنه؟' },
+      { id: 'd3', q: 'شنو أكثر عذر كذبت فيه عشان تتهرب من طلعة أو عزيمة؟' }
+    ];
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'majlisna-diwaniya-v2';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let firebaseReady = false;
+
+    const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('majlisna_sync_v2') : null;
+
+    async function initCloudBackend() {
+      try {
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+          const firebaseConfig = JSON.parse(__firebase_config);
+          const fbApp = initializeApp(firebaseConfig);
+          auth = getAuth(fbApp);
+          db = getFirestore(fbApp);
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          currentUser = auth.currentUser;
+          firebaseReady = Boolean(currentUser && db);
+        }
+      } catch (_) {
+        firebaseReady = false;
+      }
+      document.getElementById('syncText').textContent = firebaseReady ? 'سحابي مباشر' : 'مزامنة فورية';
+    }
+
+    let myPlayerId = sessionStorage.getItem('majlisna_pid');
+    if (!myPlayerId) {
+      myPlayerId = 'p_' + Math.random().toString(36).substring(2, 10);
+      sessionStorage.setItem('majlisna_pid', myPlayerId);
+    }
+
+    let localProfile = {
+      id: myPlayerId,
+      name: sessionStorage.getItem('majlisna_name') || '',
+      avatar: sessionStorage.getItem('majlisna_avatar') || 'dallah',
+      photo: sessionStorage.getItem('majlisna_photo') || ''
+    };
+
+    let activeRoomCode = null;
+    let roomState = null;
+    let unsubscribeRoom = null;
+    let timerInterval = null;
+    let lastActionTimestamp = 0;
+
+    let localRoundState = {
+      roundKey: '',
+      revealedIndices: [],
+      mcqMode: false,
+      wordleGuesses: [],
+      wordleCurrentInput: '',
+      wordleFinished: false,
+      wordleRevealedHintIdx: -1,
+      eliminatedOptions: [],
+      eliminatedKeys: [],
+      lifelinesUsed: { eliminate: false, reveal: false, time: false },
+      extraSeconds: 0,
+      riddleAnswered: false,
+      detectiveVotesSubmitted: false,
+      selectedMatches: {}
+    };
+
+    function isRateLimited(ms = 400) {
+      const now = Date.now();
+      if (now - lastActionTimestamp < ms) return true;
+      lastActionTimestamp = now;
+      return false;
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colors = {
+        info: 'bg-[#242C1E] border-[#C9A87C]/60 text-[#F5F2EB]',
+        success: 'bg-emerald-950/95 border-emerald-400 text-emerald-100',
+        error: 'bg-red-950/95 border-red-400 text-red-100'
+      };
+      toast.className = `t-toast px-4 py-2.5 rounded-xl border shadow-xl text-sm font-bold ${colors[type] || colors.info}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 220);
+      }, 2600);
+    }
+
+    function switchView(viewId) {
+      ['viewOnboarding', 'viewLobby', 'viewGame', 'viewResults'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== viewId);
+      });
+      const inRoom = viewId !== 'viewOnboarding';
+      document.getElementById('headerRoomPill').classList.toggle('hidden', !inRoom);
+      document.getElementById('leaveRoomBtn').classList.toggle('hidden', !inRoom);
+    }
+
+    /* Home Button (زر البيت) Handler */
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      sfx.click();
+      if (activeRoomCode) {
+        if (confirm('هل أنت متأكد من العودة للصفحة الرئيسية ومغادرة الغرفة؟')) {
+          stopSyncTimer();
+          if (unsubscribeRoom) unsubscribeRoom();
+          activeRoomCode = null;
+          roomState = null;
+          switchView('viewOnboarding');
+        }
+      } else {
+        switchView('viewOnboarding');
+      }
+    });
+
+    function getLocalRoomKey(code) {
+      return `majlisna_room_${appId}_${code}`;
+    }
+
+    async function saveRoomState(newState) {
+      newState.updatedAt = Date.now();
+      roomState = newState;
+      const serialized = JSON.stringify(newState);
+      try {
+        localStorage.setItem(getLocalRoomKey(newState.code), serialized);
+        if (bc) bc.postMessage({ type: 'ROOM_UPDATE', code: newState.code, state: newState });
+      } catch (_) {}
+
+      if (firebaseReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'majlisna_rooms', newState.code);
+          await setDoc(roomRef, newState);
+        } catch (_) {}
+      }
+      renderRoomState();
+    }
+
+    async function fetchRoomState(code) {
+      if (firebaseReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'majlisna_rooms', code);
+          const snap = await getDoc(roomRef);
+          if (snap.exists()) return snap.data();
+        } catch (_) {}
+      }
+      const localRaw = localStorage.getItem(getLocalRoomKey(code));
+      if (localRaw) {
+        try { return JSON.parse(localRaw); } catch (_) {}
+      }
+      return null;
+    }
+
+    function subscribeToRoom(code) {
+      if (unsubscribeRoom) {
+        unsubscribeRoom();
+        unsubscribeRoom = null;
+      }
+      const storageHandler = (e) => {
+        if (e.key === getLocalRoomKey(code) && e.newValue) {
+          try {
+            const parsed = JSON.parse(e.newValue);
+            if (!roomState || parsed.updatedAt >= (roomState.updatedAt || 0)) {
+              roomState = parsed;
+              renderRoomState();
+            }
+          } catch (_) {}
+        }
+      };
+      window.addEventListener('storage', storageHandler);
+
+      const bcHandler = (e) => {
+        if (e.data?.type === 'ROOM_UPDATE' && e.data.code === code) {
+          if (!roomState || e.data.state.updatedAt >= (roomState.updatedAt || 0)) {
+            roomState = e.data.state;
+            renderRoomState();
+          }
+        }
+      };
+      if (bc) bc.addEventListener('message', bcHandler);
+
+      let fbUnsub = null;
+      if (firebaseReady && db && currentUser) {
+        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'majlisna_rooms', code);
+        fbUnsub = onSnapshot(roomRef, (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            if (!roomState || data.updatedAt >= (roomState.updatedAt || 0)) {
+              roomState = data;
+              renderRoomState();
+            }
+          }
+        }, () => {});
+      }
+
+      unsubscribeRoom = () => {
+        window.removeEventListener('storage', storageHandler);
+        if (bc) bc.removeEventListener('message', bcHandler);
+        if (fbUnsub) fbUnsub();
+      };
+    }
+
+    function pickUnusedItem(pool, usedIds = []) {
+      const available = pool.filter(item => !usedIds.includes(item.id));
+      const source = available.length > 0 ? available : pool;
+      return source[Math.floor(Math.random() * source.length)];
+    }
+
+    function buildRoundPayload(mode, roundNum, players, usedIds) {
+      const playerIds = Object.keys(players);
+
+      if (mode === 'telepathy') {
+        const item = pickUnusedItem(TELEPATHY_WORDS, usedIds);
+        const giverId = playerIds[(roundNum - 1) % playerIds.length];
+        const choices = [item.word, ...item.distractors].sort(() => Math.random() - 0.5);
+        return {
+          mode: 'telepathy',
+          itemId: item.id,
+          secretWord: item.word,
+          category: item.cat,
+          choices,
+          giverId,
+          clue: '',
+          guesses: [],
+          solvedBy: null,
+          cheatVotes: [],
+          duration: 60,
+          startedAt: Date.now()
+        };
+      }
+
+      if (mode === 'password') {
+        const useWordle = roundNum % 2 === 0;
+        if (useWordle && WORDLE_WORDS.length > 0) {
+          const item = pickUnusedItem(WORDLE_WORDS, usedIds);
+          return {
+            mode: 'password',
+            subMode: 'wordle',
+            itemId: item.id,
+            targetWord: normalizeArabic(item.word),
+            displayWord: item.word,
+            hint: item.hint,
+            solvers: [],
+            duration: 75,
+            startedAt: Date.now()
+          };
+        } else {
+          const item = pickUnusedItem(SMART_RIDDLES, usedIds);
+          const shuffledOptions = [...item.options].sort(() => Math.random() - 0.5);
+          return {
+            mode: 'password',
+            subMode: 'riddle',
+            itemId: item.id,
+            question: item.q,
+            answer: item.ans,
+            options: shuffledOptions,
+            solvers: [],
+            duration: 45,
+            startedAt: Date.now()
+          };
+        }
+      }
+
+      if (mode === 'block') {
+        const promptItem = pickUnusedItem(DETECTIVE_PROMPTS, usedIds);
+        const targetId = playerIds[(roundNum - 1) % playerIds.length];
+        return {
+          mode: 'block',
+          itemId: promptItem.id,
+          question: promptItem.q,
+          targetId,
+          duration: 45,
+          startedAt: Date.now()
+        };
+      }
+
+      const promptItem = pickUnusedItem(DETECTIVE_PROMPTS, usedIds);
+      const shuffledAliases = [...SECRET_ALIASES].sort(() => Math.random() - 0.5);
+      const aliasMap = {};
+      playerIds.forEach((pid, idx) => {
+        const picked = shuffledAliases[idx % shuffledAliases.length];
+        aliasMap[pid] = {
+          alias: idx >= shuffledAliases.length ? `${picked.alias} ${idx + 1}` : picked.alias,
+          color: picked.color
+        };
+      });
+
+      return {
+        mode: 'detective',
+        itemId: promptItem.id,
+        prompt: promptItem.q,
+        phase: 'chat',
+        aliasMap,
+        messages: [],
+        votes: {},
+        duration: 55,
+        startedAt: Date.now()
+      };
+    }
+
+    function initAvatarPicker() {
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = '';
+      EMBLEMS.forEach(em => {
+        const selected = localProfile.avatar === em.id && !localProfile.photo;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', String(selected));
+        btn.className = `t-btn p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1.5 ${
+          selected
+            ? 'bg-[#5C3D28] border-[#C9A87C] text-[#E2C6A0] shadow-md'
+            : 'bg-[#161B12] border-[#C9A87C]/25 text-[#A8B09E] hover:border-[#C9A87C]/60'
+        }`;
+        btn.innerHTML = `${em.svg}<span class="text-[11px] font-bold truncate w-full text-center">${em.label}</span>`;
+        btn.addEventListener('click', () => {
+          sfx.click();
+          localProfile.avatar = em.id;
+          localProfile.photo = '';
+          sessionStorage.setItem('majlisna_avatar', em.id);
+          sessionStorage.removeItem('majlisna_photo');
+          document.getElementById('customPhotoPreviewBox').classList.add('hidden');
+          initAvatarPicker();
+        });
+        grid.appendChild(btn);
+      });
+    }
+
+    document.getElementById('photoUploadInput').addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const size = 96;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const minSide = Math.min(img.width, img.height);
+          const sx = (img.width - minSide) / 2;
+          const sy = (img.height - minSide) / 2;
+          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+          localProfile.photo = dataUrl;
+          sessionStorage.setItem('majlisna_photo', dataUrl);
+          document.getElementById('customPhotoImg').src = dataUrl;
+          document.getElementById('customPhotoPreviewBox').classList.remove('hidden');
+          document.getElementById('customPhotoPreviewBox').classList.add('flex');
+          initAvatarPicker();
+          sfx.success();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('clearPhotoBtn').addEventListener('click', () => {
+      sfx.click();
+      localProfile.photo = '';
+      sessionStorage.removeItem('majlisna_photo');
+      document.getElementById('customPhotoPreviewBox').classList.add('hidden');
+      initAvatarPicker();
+    });
+
+    function validateProfileInput() {
+      const inputEl = document.getElementById('nicknameInput');
+      const cleanName = escapeHTML(inputEl.value).slice(0, 18);
+      if (cleanName.length < 2) {
+        document.getElementById('nicknameError').classList.remove('hidden');
+        inputEl.classList.remove('is-shaking');
+        void inputEl.offsetWidth;
+        inputEl.classList.add('is-shaking');
+        sfx.wrong();
+        return null;
+      }
+      document.getElementById('nicknameError').classList.add('hidden');
+      localProfile.name = cleanName;
+      sessionStorage.setItem('majlisna_name', cleanName);
+      return cleanName;
+    }
+
+    async function handleCreateRoom() {
+      if (isRateLimited()) return;
+      const name = validateProfileInput();
+      if (!name) return;
+      sfx.click();
+
+      let code = generateRoomCode();
+      const existing = await fetchRoomState(code);
+      if (existing) code = generateRoomCode();
+
+      activeRoomCode = code;
+      const initialState = {
+        code,
+        hostId: myPlayerId,
+        status: 'lobby',
+        selectedMode: 'telepathy',
+        roundNumber: 0,
+        totalRounds: 3,
+        usedIds: [],
+        players: {
+          [myPlayerId]: {
+            id: myPlayerId,
+            name: localProfile.name,
+            avatar: localProfile.avatar,
+            photo: localProfile.photo,
+            ready: true,
+            isBot: false,
+            score: 0,
+            stats: { telepathyHits: 0, detectiveHits: 0, fooledCount: 0, wrongGuesses: 0 }
+          }
+        },
+        round: null,
+        updatedAt: Date.now()
+      };
+
+      subscribeToRoom(code);
+      await saveRoomState(initialState);
+      renderQRCode(code);
+      sfx.success();
+      showToast(`تم إنشاء الديوانية برمز ${code}`, 'success');
+    }
+
+    async function handleJoinRoom(codeOverride = null) {
+      if (isRateLimited()) return;
+      const name = validateProfileInput();
+      if (!name) return;
+
+      const rawCode = codeOverride || document.getElementById('roomCodeInput').value.trim();
+      if (!/^\d{4}$/.test(rawCode)) {
+        showToast('أدخل رمز غرفة صحيح مكون من 4 أرقام', 'error');
+        sfx.wrong();
+        return;
+      }
+
+      const existing = await fetchRoomState(rawCode);
+      if (!existing) {
+        showToast('الغرفة غير موجودة!', 'error');
+        sfx.wrong();
+        return;
+      }
+
+      activeRoomCode = rawCode;
+      if (!existing.players[myPlayerId]) {
+        existing.players[myPlayerId] = {
+          id: myPlayerId,
+          name: localProfile.name,
+          avatar: localProfile.avatar,
+          photo: localProfile.photo,
+          ready: true,
+          isBot: false,
+          score: 0,
+          stats: { telepathyHits: 0, detectiveHits: 0, fooledCount: 0, wrongGuesses: 0 }
+        };
+      } else {
+        existing.players[myPlayerId].name = localProfile.name;
+        existing.players[myPlayerId].avatar = localProfile.avatar;
+        existing.players[myPlayerId].photo = localProfile.photo;
+      }
+
+      subscribeToRoom(rawCode);
+      await saveRoomState(existing);
+      renderQRCode(rawCode);
+      sfx.success();
+      showToast(`حيّاك الله في ديوانية ${rawCode}`, 'success');
+    }
+
+    function renderQRCode(code) {
+      const box = document.getElementById('qrcodeBox');
+      box.innerHTML = '';
+      const url = `${window.location.origin}${window.location.pathname}?room=${code}`;
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(box, {
+            text: url,
+            width: 128,
+            height: 128,
+            colorDark: '#1B2116',
+            colorLight: '#F5F2EB',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } else {
+          box.innerHTML = `<div class="text-[#1B2116] font-heading font-black text-2xl">${code}</div>`;
+        }
+      } catch (_) {
+        box.innerHTML = `<div class="text-[#1B2116] font-heading font-black text-2xl">${code}</div>`;
+      }
+    }
+
+    function renderPlayerAvatarHtml(p, sizeClass = 'w-10 h-10') {
+      if (p.photo) {
+        return `<img src="${p.photo}" alt="" class="${sizeClass} rounded-full object-cover border border-[#C9A87C] shrink-0" />`;
+      }
+      return `<div class="${sizeClass} rounded-full bg-[#161B12] border border-[#C9A87C]/45 flex items-center justify-center text-[#E2C6A0] shrink-0">${getEmblemSvg(p.avatar)}</div>`;
+    }
+
+    function renderRoomState() {
+      if (!roomState) return;
+
+      document.getElementById('headerRoomCode').textContent = roomState.code;
+      const isHost = roomState.hostId === myPlayerId;
+      const me = roomState.players[myPlayerId];
+
+      if (roomState.status === 'lobby') {
+        switchView('viewLobby');
+        document.getElementById('lobbyCodeDisplay').textContent = roomState.code;
+        const playersArr = Object.values(roomState.players);
+        document.getElementById('playerCount').textContent = playersArr.length;
+
+        const listEl = document.getElementById('lobbyPlayersList');
+        listEl.innerHTML = '';
+        playersArr.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'p-3 rounded-xl bg-[#161B12] border border-[#C9A87C]/25 flex items-center justify-between gap-2';
+
+          const crownBadge = p.id === roomState.hostId
+            ? `<span title="راعي الديوانية" class="inline-flex items-center text-[#E2C6A0]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg></span>`
+            : '';
+
+          card.innerHTML = `
+            <div class="flex items-center gap-2.5 min-w-0">
+              ${renderPlayerAvatarHtml(p)}
+              <div class="truncate">
+                <div class="font-bold text-sm text-white flex items-center gap-1.5 truncate">
+                  <span class="truncate">${escapeHTML(p.name)}</span>
+                  ${crownBadge}
+                  ${p.isBot ? '<span class="px-1.5 py-0.5 rounded bg-[#5C3D28] text-[10px] text-[#E2C6A0]">بوت</span>' : ''}
+                </div>
+                <span class="text-xs text-[#A8B09E]">${p.score || 0} نقطة</span>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg text-xs font-bold shrink-0 ${p.ready ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-[#242C1E] text-[#A8B09E]'}">
+              ${p.ready ? 'جاهز' : 'ينتظر'}
+            </span>
+          `;
+          listEl.appendChild(card);
+        });
+
+        document.getElementById('hostGameSelector').classList.toggle('hidden', !isHost);
+        document.getElementById('guestWaitingBanner').classList.toggle('hidden', isHost);
+
+        const modeNames = {
+          telepathy: 'على الطاير (تخاطر الكلمة الواحدة)',
+          password: 'فكّها لا تفكك (ألغاز وكلمة السر)',
+          detective: 'من الخافي؟ (محقق الأسلوب)',
+          block: 'الصراحة ولا.. صكة بلوك؟',
+          tournament: 'بطولة الديوانية الشاملة'
+        };
+        document.getElementById('guestSelectedModeLabel').textContent = modeNames[roomState.selectedMode] || '';
+
+        document.querySelectorAll('.game-mode-card').forEach(btn => {
+          const selected = btn.dataset.selectGame === roomState.selectedMode;
+          btn.classList.toggle('border-[#C9A87C]', selected);
+          btn.classList.toggle('border-[#C9A87C]/20', !selected);
+          btn.querySelector('.mode-check').classList.toggle('hidden', !selected);
+        });
+
+        if (me) {
+          document.getElementById('toggleReadyBtn').textContent = me.ready ? 'جاهز للعب' : 'اضغط للاستعداد';
+        }
+      }
+
+      if (roomState.status === 'playing' && roomState.round) {
+        switchView('viewGame');
+        const roundKey = `${roomState.roundNumber}_${roomState.round.itemId}_${roomState.round.phase || ''}`;
+        if (localRoundState.roundKey !== roundKey) {
+          localRoundState = {
+            roundKey,
+            revealedIndices: [],
+            mcqMode: false,
+            wordleGuesses: [],
+            wordleCurrentInput: '',
+            wordleFinished: false,
+            wordleRevealedHintIdx: -1,
+            eliminatedOptions: [],
+            eliminatedKeys: [],
+            lifelinesUsed: { eliminate: false, reveal: false, time: false },
+            extraSeconds: 0,
+            riddleAnswered: false,
+            detectiveVotesSubmitted: false,
+            selectedMatches: {}
+          };
+        }
+
+        document.getElementById('roundIndicator').textContent = `الجولة ${roomState.roundNumber} / ${roomState.totalRounds}`;
+        document.getElementById('myScoreDisplay').textContent = me?.score || 0;
+
+        renderActiveGameArena(isHost);
+        startSyncTimer();
+      }
+
+      if (roomState.status === 'results') {
+        stopSyncTimer();
+        switchView('viewResults');
+        renderResultsScreen(isHost);
+      }
+    }
+
+    function renderActiveGameArena(isHost) {
+      const r = roomState.round;
+      document.getElementById('arenaTelepathy').classList.toggle('hidden', r.mode !== 'telepathy');
+      document.getElementById('arenaPassword').classList.toggle('hidden', r.mode !== 'password');
+      document.getElementById('arenaDetective').classList.toggle('hidden', r.mode !== 'detective');
+      document.getElementById('arenaBlock').classList.toggle('hidden', r.mode !== 'block');
+
+      const thumbMap = {
+        telepathy: 'watermarked_img_12681219483217123749.jpg',
+        password: 'watermarked_img_9403813343663088498.jpg',
+        detective: 'watermarked_img_5655190359981626397.jpg',
+        block: 'IMG_6268.jpeg'
+      };
+      document.getElementById('hudGameThumb').src = thumbMap[r.mode] || 'IMG_6267.jpeg';
+
+      if (r.mode === 'telepathy') renderTelepathyArena(r, isHost);
+      if (r.mode === 'password') renderPasswordArena(r);
+      if (r.mode === 'detective') renderDetectiveArena(r, isHost);
+      if (r.mode === 'block') renderBlockArena(r, isHost);
+    }
+
+    /* Game 1: على الطاير */
+    function renderTelepathyArena(r, isHost) {
+      document.getElementById('gameBadgeTitle').textContent = 'على الطاير';
+      const giver = roomState.players[r.giverId];
+      const amIGiver = r.giverId === myPlayerId;
+
+      document.getElementById('telepathyGiverName').textContent = giver ? giver.name : '---';
+      document.getElementById('telepathySecretBox').classList.toggle('hidden', !amIGiver);
+      document.getElementById('telepathyGuesserBox').classList.toggle('hidden', amIGiver);
+
+      if (amIGiver) {
+        document.getElementById('telepathySecretWord').textContent = r.secretWord;
+        document.getElementById('telepathyCategoryTag').textContent = `التصنيف: ${r.category}`;
+        document.getElementById('clueGiverControls').classList.toggle('hidden', Boolean(r.clue));
+        document.getElementById('guesserControls').classList.add('hidden');
+      } else {
+        document.getElementById('clueGiverControls').classList.add('hidden');
+        document.getElementById('guesserControls').classList.remove('hidden');
+        document.getElementById('telepathyGuesserCategory').textContent = `التصنيف: ${r.category}`;
+
+        const chars = Array.from(r.secretWord);
+        const masked = chars.map((ch, idx) => (localRoundState.revealedIndices.includes(idx) ? ch : '_')).join(' ');
+        document.getElementById('telepathyLetterSlots').textContent = masked;
+
+        document.getElementById('freeGuessContainer').classList.toggle('hidden', localRoundState.mcqMode);
+        const mcqBox = document.getElementById('telepathyMcqContainer');
+        mcqBox.classList.toggle('hidden', !localRoundState.mcqMode);
+        if (localRoundState.mcqMode && mcqBox.children.length === 0) {
+          r.choices.forEach(choice => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 't-btn p-3 rounded-xl bg-[#161B12] hover:bg-[#C9A87C] hover:text-[#1B2116] border border-[#C9A87C]/35 font-heading font-bold text-sm text-white';
+            b.textContent = choice;
+            b.addEventListener('click', () => submitTelepathyGuess(choice));
+            mcqBox.appendChild(b);
+          });
+        }
+      }
+
+      const clueBox = document.getElementById('activeClueDisplayBox');
+      if (r.clue) {
+        clueBox.classList.remove('hidden');
+        document.getElementById('activeClueWord').textContent = r.clue;
+      } else {
+        clueBox.classList.add('hidden');
+      }
+
+      document.getElementById('cheatVotesCount').textContent = (r.cheatVotes || []).length;
+
+      const feed = document.getElementById('telepathyFeed');
+      feed.innerHTML = '';
+      if (!r.guesses || r.guesses.length === 0) {
+        feed.innerHTML = '<p class="text-xs text-[#A8B09E] text-center py-2">بانتظار التلميح وتخمينات الربع...</p>';
+      } else {
+        r.guesses.slice().reverse().forEach(g => {
+          const row = document.createElement('div');
+          row.className = `px-3 py-2 rounded-lg flex items-center justify-between ${
+            g.correct ? 'bg-emerald-950 border border-emerald-500/50 text-emerald-300' : 'bg-[#161B12] text-[#F5F2EB]'
+          }`;
+          row.innerHTML = `<span><strong>${escapeHTML(g.playerName)}:</strong> ${escapeHTML(g.text)}</span><span class="text-xs font-bold">${g.correct ? 'صحيح' : 'خطأ'}</span>`;
+          feed.appendChild(row);
+        });
+      }
+
+      if (isHost && giver?.isBot && !r.clue) {
+        setTimeout(async () => {
+          if (roomState?.status === 'playing' && roomState.round?.mode === 'telepathy' && !roomState.round.clue) {
+            roomState.round.clue = r.category.split(' ')[0];
+            await saveRoomState(roomState);
+          }
+        }, 2000);
+      }
+    }
+
+    document.getElementById('submitClueBtn').addEventListener('click', async () => {
+      if (isRateLimited() || !roomState || roomState.round?.mode !== 'telepathy') return;
+      const raw = document.getElementById('clueInput').value.trim();
+      const errEl = document.getElementById('clueValidationMsg');
+      const secretNorm = normalizeArabic(roomState.round.secretWord);
+      const clueNorm = normalizeArabic(raw);
+
+      if (!raw || raw.length < 2) {
+        errEl.textContent = 'اكتب كلمة تلميح واضحة (حرفين على الأقل)';
+        errEl.classList.remove('hidden');
+        sfx.wrong();
+        return;
+      }
+      if (/\s/.test(raw)) {
+        errEl.textContent = 'ممنوع المسافات! مسموح بكلمة واحدة فقط';
+        errEl.classList.remove('hidden');
+        sfx.wrong();
+        return;
+      }
+      if (/[0-9٠-٩]/.test(raw)) {
+        errEl.textContent = 'ممنوع استخدام الأرقام!';
+        errEl.classList.remove('hidden');
+        sfx.wrong();
+        return;
+      }
+      if (clueNorm.includes(secretNorm) || secretNorm.includes(clueNorm)) {
+        errEl.textContent = 'غش! ممنوع تكتب الكلمة السرية أو جزء منها';
+        errEl.classList.remove('hidden');
+        sfx.cheat();
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      roomState.round.clue = escapeHTML(raw);
+      document.getElementById('clueInput').value = '';
+      sfx.click();
+      await saveRoomState(roomState);
+    });
+
+    async function submitTelepathyGuess(textOverride = null) {
+      if (isRateLimited() || !roomState || roomState.round?.mode !== 'telepathy') return;
+      const r = roomState.round;
+      if (r.giverId === myPlayerId || r.solvedBy) return;
+
+      const inputEl = document.getElementById('guessInput');
+      const raw = textOverride !== null ? textOverride : inputEl.value.trim();
+      if (!raw) return;
+      if (textOverride === null) inputEl.value = '';
+
+      const isCorrect = normalizeArabic(raw) === normalizeArabic(r.secretWord);
+      const me = roomState.players[myPlayerId];
+
+      r.guesses = r.guesses || [];
+      r.guesses.push({
+        playerId: myPlayerId,
+        playerName: me.name,
+        text: escapeHTML(raw),
+        correct: isCorrect
+      });
+
+      if (isCorrect) {
+        r.solvedBy = myPlayerId;
+        const bonus = localRoundState.mcqMode ? 60 : 100;
+        me.score = (me.score || 0) + bonus;
+        me.stats.telepathyHits = (me.stats.telepathyHits || 0) + 1;
+        sfx.success();
+        showToast(`كفو! جبتها صح (+${bonus} نقطة)`, 'success');
+        await saveRoomState(roomState);
+        setTimeout(() => advanceToResults(`الكلمة السرية كانت: "${r.secretWord}" — جابها ${me.name}`), 1400);
+      } else {
+        sfx.wrong();
+        await saveRoomState(roomState);
+      }
+    }
+
+    document.getElementById('submitGuessBtn').addEventListener('click', () => submitTelepathyGuess());
+    document.getElementById('guessInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitTelepathyGuess();
+    });
+
+    document.getElementById('cheatReportBtn').addEventListener('click', async () => {
+      if (isRateLimited() || !roomState || roomState.round?.mode !== 'telepathy') return;
+      const r = roomState.round;
+      r.cheatVotes = r.cheatVotes || [];
+      if (r.cheatVotes.includes(myPlayerId)) {
+        showToast('تم تسجيل صوتك مسبقاً', 'info');
+        return;
+      }
+      r.cheatVotes.push(myPlayerId);
+      sfx.cheat();
+      await saveRoomState(roomState);
+      showToast('تم تسجيل بلاغ غش!', 'error');
+    });
+
+    /* Game 2: فكها لا تفكك */
+    function renderPasswordArena(r) {
+      document.getElementById('gameBadgeTitle').textContent = 'فكّها لا تفكك';
+      const isWordle = r.subMode === 'wordle';
+      document.getElementById('passwordRiddleBox').classList.toggle('hidden', isWordle);
+      document.getElementById('passwordWordleBox').classList.toggle('hidden', !isWordle);
+
+      if (!isWordle) {
+        document.getElementById('riddleQuestionText').textContent = r.question;
+        const grid = document.getElementById('riddleOptionsGrid');
+        grid.innerHTML = '';
+        r.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 't-btn p-4 rounded-xl border-2 bg-[#161B12] hover:border-[#C9A87C] border-[#C9A87C]/30 text-white font-heading font-bold text-base';
+          btn.textContent = opt;
+          btn.addEventListener('click', () => handleRiddleChoice(opt, btn));
+          grid.appendChild(btn);
+        });
+      } else {
+        document.getElementById('wordleClueBanner').textContent = `التلميح: ${r.hint}`;
+        renderWordleGridAndKeyboard(r.targetWord);
+      }
+    }
+
+    async function handleRiddleChoice(selectedOpt, btnEl) {
+      if (localRoundState.riddleAnswered || !roomState || roomState.round?.mode !== 'password') return;
+      localRoundState.riddleAnswered = true;
+      const r = roomState.round;
+      const me = roomState.players[myPlayerId];
+
+      if (selectedOpt === r.answer) {
+        btnEl.classList.add('bg-emerald-700', 'border-emerald-400');
+        me.score = (me.score || 0) + 100;
+        sfx.success();
+        showToast('إجابة صحيحة! +100 نقطة', 'success');
+        await saveRoomState(roomState);
+        setTimeout(() => advanceToResults(`الإجابة الصحيحة: "${r.answer}"`), 1400);
+      } else {
+        btnEl.classList.add('bg-red-900', 'border-red-400');
+        sfx.wrong();
+        showToast(`حسافة! الإجابة الصحيحة هي: ${r.answer}`, 'error');
+        await saveRoomState(roomState);
+        setTimeout(() => advanceToResults(`الإجابة الصحيحة: "${r.answer}"`), 1500);
+      }
+    }
+
+    function renderWordleGridAndKeyboard(targetWord) {
+      const grid = document.getElementById('wordleGrid');
+      grid.innerHTML = '';
+      for (let rowIdx = 0; rowIdx < 6; rowIdx++) {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'grid grid-cols-5 gap-1.5';
+        for (let colIdx = 0; colIdx < 5; colIdx++) {
+          const tile = document.createElement('div');
+          tile.className = 'h-12 rounded-xl border-2 bg-[#161B12] border-[#C9A87C]/25 text-white flex items-center justify-center font-heading font-black text-xl';
+          rowEl.appendChild(tile);
+        }
+        grid.appendChild(rowEl);
+      }
+    }
+
+    /* Game 3: من الخافي؟ */
+    function renderDetectiveArena(r, isHost) {
+      document.getElementById('gameBadgeTitle').textContent = 'من الخافي؟';
+      document.getElementById('detectivePromptText').textContent = r.prompt;
+      const myMask = r.aliasMap?.[myPlayerId] || { alias: 'مجهول', color: '#E2C6A0' };
+      const aliasEl = document.getElementById('mySecretAlias');
+      aliasEl.textContent = myMask.alias;
+      aliasEl.style.color = myMask.color;
+
+      const isVotePhase = r.phase === 'vote';
+      document.getElementById('detectiveChatPhase').classList.toggle('hidden', isVotePhase);
+      document.getElementById('detectiveVotePhase').classList.toggle('hidden', !isVotePhase);
+
+      if (!isVotePhase) {
+        const feed = document.getElementById('detectiveChatMessages');
+        feed.innerHTML = '';
+        if (!r.messages || r.messages.length === 0) {
+          feed.innerHTML = '<p class="text-xs text-[#A8B09E] text-center py-6">اكتب إجابتك بهويتك المجهولة..</p>';
+        } else {
+          r.messages.forEach(m => {
+            const isMine = m.senderId === myPlayerId;
+            const bubble = document.createElement('div');
+            bubble.className = `p-3 rounded-2xl max-w-[85%] ${isMine ? 'mr-auto bg-[#2E3826] border border-[#C9A87C]/45' : 'ml-auto bg-[#242C1E] border border-[#C9A87C]/20'}`;
+            bubble.innerHTML = `
+              <div class="text-xs font-extrabold mb-0.5" style="color: ${m.color}">${escapeHTML(m.alias)} ${isMine ? '(أنت)' : ''}</div>
+              <div class="text-sm text-white leading-relaxed">${escapeHTML(m.text)}</div>
+            `;
+            feed.appendChild(bubble);
+          });
+          feed.scrollTop = feed.scrollHeight;
+        }
+      }
+    }
+
+    async function sendDetectiveMessage(textOverride = null) {
+      if (isRateLimited(350) || !roomState || roomState.round?.mode !== 'detective') return;
+      const r = roomState.round;
+      const input = document.getElementById('detectiveChatInput');
+      const raw = textOverride !== null ? textOverride : input.value.trim();
+      if (!raw) return;
+      if (textOverride === null) input.value = '';
+
+      const mask = r.aliasMap[myPlayerId];
+      r.messages = r.messages || [];
+      r.messages.push({
+        senderId: myPlayerId,
+        alias: mask.alias,
+        color: mask.color,
+        text: escapeHTML(raw).slice(0, 120)
+      });
+      sfx.click();
+      await saveRoomState(roomState);
+    }
+
+    document.getElementById('sendDetectiveChatBtn').addEventListener('click', () => sendDetectiveMessage());
+    document.getElementById('detectiveChatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendDetectiveMessage();
+    });
+
+    /* Game 4: الصراحة ولا صكة بلوك */
+    function renderBlockArena(r, isHost) {
+      document.getElementById('gameBadgeTitle').textContent = 'الصراحة ولا صكة بلوك';
+      const targetPlayer = roomState.players[r.targetId];
+      const amITarget = r.targetId === myPlayerId;
+
+      document.getElementById('blockTargetName').textContent = targetPlayer ? targetPlayer.name : '---';
+      document.getElementById('blockQuestionText').textContent = r.question;
+
+      document.getElementById('blockTargetControls').classList.toggle('hidden', !amITarget);
+      document.getElementById('blockSpectatorBanner').classList.toggle('hidden', amITarget);
+    }
+
+    document.getElementById('submitTruthBtn').addEventListener('click', async () => {
+      if (isRateLimited() || !roomState || roomState.round?.mode !== 'block') return;
+      const ans = escapeHTML(document.getElementById('blockAnswerInput').value);
+      if (ans.length < 3) {
+        showToast('اكتب إجابة واضحة أولاً!', 'error');
+        sfx.wrong();
+        return;
+      }
+      const me = roomState.players[myPlayerId];
+      me.score = (me.score || 0) + 100;
+      sfx.success();
+      await saveRoomState(roomState);
+      await advanceToResults(`${me.name} جاوب بكل صراحة (+100 نقطة)`);
+    });
+
+    document.getElementById('takeBlockBtn').addEventListener('click', async () => {
+      if (isRateLimited() || !roomState || roomState.round?.mode !== 'block') return;
+      const me = roomState.players[myPlayerId];
+      me.score = Math.max(0, (me.score || 0) - 30);
+      sfx.cheat();
+      await saveRoomState(roomState);
+      await advanceToResults(`${me.name} أخذ بلوك (-30 نقطة)`);
+    });
+
+    function stopSyncTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function startSyncTimer() {
+      stopSyncTimer();
+      const updateTick = async () => {
+        if (!roomState || roomState.status !== 'playing' || !roomState.round) {
+          stopSyncTimer();
+          return;
+        }
+        const r = roomState.round;
+        const elapsed = Math.floor((Date.now() - r.startedAt) / 1000);
+        const remaining = Math.max(0, r.duration + localRoundState.extraSeconds - elapsed);
+
+        const timerEl = document.getElementById('timerDisplay');
+        timerEl.textContent = remaining;
+        timerEl.classList.toggle('text-red-400', remaining <= 10);
+
+        if (remaining === 0 && roomState.hostId === myPlayerId) {
+          stopSyncTimer();
+          await advanceToResults('انتهى وقت الجولة!');
+        }
+      };
+      updateTick();
+      timerInterval = setInterval(updateTick, 1000);
+    }
+
+    async function advanceToResults(summaryText) {
+      if (!roomState || roomState.status === 'results') return;
+      roomState.status = 'results';
+      roomState.roundSummary = summaryText;
+      sfx.fanfare();
+      await saveRoomState(roomState);
+    }
+
+    function renderResultsScreen(isHost) {
+      const isFinal = roomState.roundNumber >= roomState.totalRounds;
+      document.getElementById('resultsBadge').textContent = isFinal ? 'ختام بطولة الديوانية' : `ملخص الجولة ${roomState.roundNumber}`;
+      document.getElementById('resultsTitle').textContent = isFinal ? 'ألقاب وتكريم الديوانية' : 'ترتيب الربع الحالي';
+      document.getElementById('resultsSubtitle').textContent = roomState.roundSummary || '';
+
+      const sortedPlayers = Object.values(roomState.players).sort((a, b) => (b.score || 0) - (a.score || 0));
+      const lb = document.getElementById('leaderboardList');
+      lb.innerHTML = '';
+      sortedPlayers.forEach((p, idx) => {
+        const row = document.createElement('div');
+        row.className = `p-3.5 rounded-xl border flex items-center justify-between ${
+          idx === 0 ? 'bg-[#5C3D28]/50 border-[#C9A87C]' : 'bg-[#161B12] border-[#C9A87C]/20'
+        }`;
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="font-heading font-black text-base w-7 h-7 rounded-lg bg-[#242C1E] border border-[#C9A87C]/30 text-[#E2C6A0] flex items-center justify-center">${idx + 1}</span>
+            ${renderPlayerAvatarHtml(p, 'w-9 h-9')}
+            <span class="font-bold text-white">${escapeHTML(p.name)}</span>
+          </div>
+          <span class="font-heading font-black text-lg text-emerald-400">${p.score || 0} نقطة</span>
+        `;
+        lb.appendChild(row);
+      });
+
+      // Next Round Button (الجولة التالية)
+      const nextBtn = document.getElementById('nextRoundBtn');
+      nextBtn.classList.toggle('hidden', !isHost || isFinal);
+    }
+
+    document.getElementById('createRoomBtn').addEventListener('click', handleCreateRoom);
+    document.getElementById('joinRoomBtn').addEventListener('click', () => handleJoinRoom());
+
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      if (!activeRoomCode) return;
+      const url = `${window.location.origin}${window.location.pathname}?room=${activeRoomCode}`;
+      const tempInput = document.createElement('input');
+      tempInput.value = url;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      tempInput.remove();
+      sfx.success();
+      showToast('تم نسخ رابط الديوانية!', 'success');
+    });
+
+    document.getElementById('addBotBtn').addEventListener('click', async () => {
+      if (!roomState || roomState.hostId !== myPlayerId) return;
+      const botTemplate = BOT_PROFILES[Math.floor(Math.random() * BOT_PROFILES.length)];
+      const botId = 'bot_' + Date.now().toString(36);
+      roomState.players[botId] = {
+        id: botId,
+        name: `${botTemplate.name}_آلي`,
+        avatar: botTemplate.avatar,
+        photo: '',
+        ready: true,
+        isBot: true,
+        score: 0,
+        stats: { telepathyHits: 0, detectiveHits: 0, fooledCount: 0, wrongGuesses: 0 }
+      };
+      sfx.click();
+      await saveRoomState(roomState);
+      showToast(`انضم ${botTemplate.name} للديوانية`, 'success');
+    });
+
+    document.getElementById('toggleReadyBtn').addEventListener('click', async () => {
+      if (!roomState || !roomState.players[myPlayerId]) return;
+      roomState.players[myPlayerId].ready = !roomState.players[myPlayerId].ready;
+      sfx.click();
+      await saveRoomState(roomState);
+    });
+
+    document.querySelectorAll('.game-mode-card').forEach(card => {
+      card.addEventListener('click', async () => {
+        if (!roomState || roomState.hostId !== myPlayerId) return;
+        roomState.selectedMode = card.dataset.selectGame;
+        sfx.click();
+        await saveRoomState(roomState);
+      });
+    });
+
+    async function launchNextRound(resetTournament = false) {
+      if (!roomState || roomState.hostId !== myPlayerId) return;
+      if (resetTournament) {
+        roomState.roundNumber = 0;
+        Object.values(roomState.players).forEach(p => p.score = 0);
+      }
+      roomState.roundNumber = (roomState.roundNumber || 0) + 1;
+      roomState.totalRounds = roomState.selectedMode === 'tournament' ? 4 : 3;
+
+      let effectiveMode = roomState.selectedMode;
+      if (effectiveMode === 'tournament') {
+        const order = ['telepathy', 'password', 'detective', 'block'];
+        effectiveMode = order[(roomState.roundNumber - 1) % order.length];
+      }
+
+      const payload = buildRoundPayload(effectiveMode, roomState.roundNumber, roomState.players, roomState.usedIds || []);
+      roomState.usedIds = [...(roomState.usedIds || []), payload.itemId];
+      roomState.round = payload;
+      roomState.status = 'playing';
+      sfx.success();
+      await saveRoomState(roomState);
+    }
+
+    document.getElementById('startGameBtn').addEventListener('click', () => launchNextRound(true));
+    document.getElementById('nextRoundBtn').addEventListener('click', () => launchNextRound(false));
+
+    document.getElementById('backToLobbyBtn').addEventListener('click', async () => {
+      if (!roomState) return;
+      if (roomState.hostId === myPlayerId) {
+        roomState.status = 'lobby';
+        roomState.round = null;
+        await saveRoomState(roomState);
+      } else {
+        switchView('viewLobby');
+      }
+    });
+
+    document.getElementById('leaveRoomBtn').addEventListener('click', () => {
+      stopSyncTimer();
+      if (unsubscribeRoom) unsubscribeRoom();
+      activeRoomCode = null;
+      roomState = null;
+      sfx.click();
+      switchView('viewOnboarding');
+    });
+
+    document.getElementById('muteToggleBtn').addEventListener('click', () => {
+      sfx.muted = !sfx.muted;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', sfx.muted);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', !sfx.muted);
+      if (!sfx.muted) sfx.click();
+    });
+
+    window.addEventListener('load', async () => {
+      await initCloudBackend();
+      initAvatarPicker();
+
+      if (localProfile.name) {
+        document.getElementById('nicknameInput').value = localProfile.name;
+      }
+      if (localProfile.photo) {
+        document.getElementById('customPhotoImg').src = localProfile.photo;
+        document.getElementById('customPhotoPreviewBox').classList.remove('hidden');
+        document.getElementById('customPhotoPreviewBox').classList.add('flex');
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get('room');
+      if (roomParam && /^\d{4}$/.test(roomParam)) {
+        document.getElementById('roomCodeInput').value = roomParam;
+        if (localProfile.name) {
+          await handleJoinRoom(roomParam);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
