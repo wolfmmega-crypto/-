@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجلسنا - ألعاب الديوانية الرقمية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #1B2116; color: #F5EBE6; }
+        .wood-card { background: #5C3D28; border: 2px solid #C9A87C; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .gold-accent { color: #C9A87C; }
+        .gold-bg { background-color: #C9A87C; color: #1B2116; }
+        .gold-border { border-color: #C9A87C; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#2C3523] via-[#1B2116] to-[#0F130C]">
+
+    <!-- شريط التنقل العلوي -->
+    <header class="w-full max-w-4xl flex items-center justify-between p-4 wood-card rounded-2xl mb-4">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <button onclick="goToHome()" class="px-4 py-2 bg-[#1B2116] text-[#C9A87C] border gold-border rounded-xl font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition">
+                زر البيت 🏠
+            </button>
+            <h1 class="text-xl font-black gold-accent tracking-wider">مجلسنا (Majlisna)</h1>
+        </div>
+        <div id="room-info" class="hidden text-sm gold-accent bg-[#1B2116] px-3 py-1.5 rounded-lg border gold-border font-semibold">
+            غرفة رقم: <span id="current-room-code" class="font-mono font-bold text-white">----</span>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main id="app-container" class="w-full max-w-4xl flex-1 flex flex-col items-center justify-center">
+        
+        <!-- شاشة تسجيل الدخول واللوبي -->
+        <section id="screen-onboarding" class="w-full max-w-md wood-card p-8 rounded-3xl text-center space-y-6">
+            <div class="space-y-2">
+                <h2 class="text-3xl font-black gold-accent">ديوانية الأساطير</h2>
+                <p class="text-sm text-gray-300">سجل بياناتك وادخل جو التحدي مع ربعك</p>
+            </div>
+
+            <div class="space-y-4 text-right">
+                <div>
+                    <label class="block text-sm font-bold gold-accent mb-1">اسمك بالديوانية:</label>
+                    <input type="text" id="player-nickname" placeholder="مثال: بوحمد، الصقر..." class="w-full px-4 py-3 rounded-xl bg-[#1B2116] border gold-border text-white focus:outline-none focus:ring-2 focus:ring-[#C9A87C]">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold gold-accent mb-2">اختر شعارك (أفاتار):</label>
+                    <div class="grid grid-cols-4 gap-3" id="avatar-selector">
+                        <button type="button" onclick="selectAvatar('دلة')" class="p-3 bg-[#1B2116] border-2 gold-border rounded-xl text-center font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition avatar-btn active-avatar">دلة ☕</button>
+                        <button type="button" onclick="selectAvatar('صقر')" class="p-3 bg-[#1B2116] border gold-border rounded-xl text-center font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition avatar-btn">صقر 🦅</button>
+                        <button type="button" onclick="selectAvatar('نوخذه')" class="p-3 bg-[#1B2116] border gold-border rounded-xl text-center font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition avatar-btn">نوخذه ⚓</button>
+                        <button type="button" onclick="selectAvatar('ذيب')" class="p-3 bg-[#1B2116] border gold-border rounded-xl text-center font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition avatar-btn">ذيب 🐺</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 space-y-3">
+                <button onclick="createRoom()" class="w-full py-4 gold-bg rounded-xl font-black text-lg shadow-lg hover:opacity-95 transition">
+                    أنشئ ديوانية جديدة 🎮
+                </button>
+                <div class="flex space-x-2 space-x-reverse">
+                    <input type="text" id="join-room-code" placeholder="أدخل رمز الغرفة (4 أرقام)" maxlength="4" class="flex-1 px-4 py-3 rounded-xl bg-[#1B2116] border gold-border text-white text-center font-mono tracking-widest">
+                    <button onclick="joinRoom()" class="px-6 py-3 bg-[#1B2116] text-[#C9A87C] border gold-border rounded-xl font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition">
+                        انضمام
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- شاشة غرفة الانتظار (Lobby) -->
+        <section id="screen-lobby" class="hidden w-full max-w-2xl wood-card p-8 rounded-3xl space-y-6 text-center">
+            <h2 class="text-3xl font-black gold-accent">غرفة الديوانية النشطة</h2>
+            
+            <div class="flex flex-col md:flex-row justify-around items-center bg-[#1B2116] p-6 rounded-2xl border gold-border gap-6">
+                <div>
+                    <p class="text-sm text-gray-400 mb-1">رمز الغرفة:</p>
+                    <span id="display-room-code" class="text-4xl font-mono font-black gold-accent tracking-widest">----</span>
+                </div>
+                <div id="qrcode-container" class="bg-white p-2 rounded-xl"></div>
+            </div>
+
+            <div class="text-right space-y-2">
+                <h3 class="font-bold gold-accent">الربع المتواجدين في الديوانية (<span id="player-count">0</span>):</h3>
+                <div id="players-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-40 overflow-y-auto p-2 bg-[#1B2116] rounded-xl border border-[#C9A87C]/30">
+                    <!-- قائمة اللاعبين -->
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                <button onclick="addBotPlayer()" class="flex-1 py-3 bg-[#1B2116] text-[#C9A87C] border gold-border rounded-xl font-bold hover:bg-[#C9A87C] hover:text-[#1B2116] transition">
+                    + إضافة لاعب ديوانية (تجريبي)
+                </button>
+                <button onclick="startGamesMenu()" class="flex-1 py-4 gold-bg rounded-xl font-black text-lg shadow-lg hover:opacity-95 transition">
+                    اختر لعبة وابدأ التحدي 🚀
+                </button>
+            </div>
+        </section>
+
+        <!-- شاشة اختيار الألعاب -->
+        <section id="screen-games-menu" class="hidden w-full max-w-3xl wood-card p-8 rounded-3xl space-y-6 text-center">
+            <h2 class="text-3xl font-black gold-accent">اختر ساحة التحدي</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div onclick="selectGameMode(1)" class="p-6 bg-[#1B2116] border-2 gold-border rounded-2xl cursor-pointer hover:bg-[#C9A87C]/10 transition text-right space-y-2">
+                    <h3 class="text-xl font-bold gold-accent">1. على الطاير (Telepathy)</h3>
+                    <p class="text-sm text-gray-300">خمّن الكلمة السرية من تلميح زميلك الفوري وبدون لف ودوران.</p>
+                </div>
+                <div onclick="selectGameMode(2)" class="p-6 bg-[#1B2116] border-2 gold-border rounded-2xl cursor-pointer hover:bg-[#C9A87C]/10 transition text-right space-y-2">
+                    <h3 class="text-xl font-bold gold-accent">2. فكّها لا تفكك (Smart Riddles)</h3>
+                    <p class="text-sm text-gray-300">ألغاز خليجية ذكية وتحدي كلمات بخيارات ذكية وسريعة.</p>
+                </div>
+                <div onclick="selectGameMode(3)" class="p-6 bg-[#1B2116] border-2 gold-border rounded-2xl cursor-pointer hover:bg-[#C9A87C]/10 transition text-right space-y-2">
+                    <h3 class="text-xl font-bold gold-accent">3. من الخافي؟ (Anonymous Chat)</h3>
+                    <p class="text-sm text-gray-300">شات مجهول وأسئلة جريئة، وبعدها حاول تكشف هوية صاحب كل رد.</p>
+                </div>
+                <div onclick="selectGameMode(4)" class="p-6 bg-[#1B2116] border-2 gold-border rounded-2xl cursor-pointer hover:bg-[#C9A87C]/10 transition text-right space-y-2">
+                    <h3 class="text-xl font-bold gold-accent">4. الصراحة ولا.. صكة بلوك؟</h3>
+                    <p class="text-sm text-gray-300">أسئلة محرجة وحقائق ديوانية نارية بدون مجاملة.</p>
+                </div>
+            </div>
+
+            <button onclick="goToLobby()" class="px-6 py-2 bg-[#1B2116] text-[#C9A87C] border gold-border rounded-xl font-bold">
+                العودة للديوانية
+            </button>
+        </section>
+
+        <!-- ساحة اللعب: لعبة 1 (على الطاير) -->
+        <section id="game-room-1" class="hidden w-full max-w-2xl wood-card p-8 rounded-3xl space-y-6 text-center">
+            <h2 class="text-2xl font-black gold-accent">على الطاير - الجولة <span id="g1-round">1</span></h2>
+            <div id="g1-clue-box" class="p-6 bg-[#1B2116] rounded-2xl border gold-border space-y-3">
+                <p class="text-sm text-gray-400">دور المُلمّح:</p>
+                <p id="g1-secret-word" class="text-3xl font-black text-white tracking-wide">----</p>
+                <p class="text-xs text-[#C9A87C]">اكتب تلميحاً من كلمة واحدة لربعك!</p>
+                <div class="flex gap-2 mt-2">
+                    <input type="text" id="g1-clue-input" placeholder="اكتب تلميحك هنا..." class="flex-1 px-4 py-2 rounded-xl bg-[#2C3523] border gold-border text-white">
+                    <button onclick="submitClue()" class="px-6 py-2 gold-bg rounded-xl font-bold">إرسال</button>
+                </div>
+            </div>
+            <div class="space-y-3 text-right">
+                <h3 class="font-bold gold-accent">التخمينات الحية:</h3>
+                <div id="g1-guesses-log" class="p-4 bg-[#1B2116] rounded-xl border border-[#C9A87C]/30 h-32 overflow-y-auto space-y-2 text-sm"></div>
+            </div>
+            <button onclick="nextRoundGame1()" class="w-full py-3 bg-[#1B2116] text-[#C9A87C] border gold-border rounded-xl font-bold">
+                الجولة التالية ⏭️
+            </button>
+        </section>
+
+        <!-- ساحة اللعب: لعبة 2 (فكّها لا تفكك) -->
+        <section id="game-room-2" class="hidden w-full max-w-2xl wood-card p-8 rounded-3xl space-y-6 text-center">
+            <h2 class="text-2xl font-black gold-accent">فكّها لا تفكك - اللغز الذكي</h2>
+            <div class="p-6 bg-[#1B2116] rounded-2xl border gold-border space-y-4">
+                <p id="g2-riddle-text" class="text-xl font-bold text-white">جار تحميل اللغز...</p>
+                <div id="g2-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <!-- الخيارات -->
+                </div>
+            </div>
+            <div class="flex justify-between items-center text-sm gold-accent">
+                <span>النتيجة: <span id="g2-score" class="font-bold text-white">0</span></span>
+                <button onclick="nextRiddle()" class="px-6 py-2 gold-bg rounded-xl font-bold">السؤال التالي ⏭️</button>
+            </div>
+        </section>
+
+        <!-- ساحة اللعب: لعبة 3 (من الخافي؟) -->
+        <section id="game-room-3" class="hidden w-full max-w-2xl wood-card p-8 rounded-3xl space-y-6 text-center">
+            <h2 class="text-2xl font-black gold-accent">من الخافي؟ - شات الديوانية المجهول</h2>
+            <div class="p-4 bg-[#1B2116] rounded-2xl border gold-border text-right space-y-2">
+                <p class="text-xs text-gray-400">السؤال الحالي:</p>
+                <p id="g3-prompt" class="text-lg font-bold text-white">وش أغبى شي شريته وطار معاشك عليه؟</p>
+            </div>
+            <div id="g3-chat-box" class="p-4 bg-[#1B2116] rounded-xl border border-[#C9A87C]/30 h-48 overflow-y-auto space-y-3 text-right">
+                <!-- رسائل الشات -->
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="g3-msg-input" placeholder="اكتب ردك المجهول هنا..." class="flex-1 px-4 py-3 rounded-xl bg-[#1B2116] border gold-border text-white">
+                <button onclick="sendAnonMessage()" class="px-6 py-3 gold-bg rounded-xl font-bold">إرسال</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- تذييل الصفحة -->
+    <footer class="w-full max-w-4xl text-center py-4 text-xs text-gray-400 border-t border-[#C9A87C]/20 mt-4">
+        مجلسنا (Majlisna) - جميع الحقوق محفوظة للديوانية الرقمية 2026
+    </footer>
+
+    <!-- سكريبت التشغيل والمنطق البرمجي -->
+    <script>
+        let currentUser = { name: '', avatar: 'دلة' };
+        let currentRoom = { code: '', host: '', players: [], gameMode: 1 };
+        
+        function selectAvatar(av) {
+            document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('active-avatar', 'bg-[#C9A87C]', 'text-[#1B2116]'));
+            event.target.classList.add('active-avatar', 'bg-[#C9A87C]', 'text-[#1B2116]');
+            currentUser.avatar = av;
+        }
+
+        function createRoom() {
+            const nickname = document.getElementById('player-nickname').value.trim();
+            if (!nickname) {
+                alert('الرجاء إدخال اسمك الكريم أولاً!');
+                return;
+            }
+            currentUser.name = nickname;
+            currentRoom.code = Math.floor(1000 + Math.random() * 9000).toString();
+            currentRoom.host = nickname;
+            currentRoom.players = [currentUser];
+
+            initRoomUI();
+        }
+
+        function joinRoom() {
+            const nickname = document.getElementById('player-nickname').value.trim();
+            const code = document.getElementById('join-room-code').value.trim();
+            if (!nickname || code.length !== 4) {
+                alert('الرجاء إدخال اسمك ورمز الغرفة المكون من 4 أرقام بشكل صحيح.');
+                return;
+            }
+            currentUser.name = nickname;
+            currentRoom.code = code;
+            currentRoom.players = [currentUser, { name: 'بوحسين', avatar: 'صقر' }, { name: 'المطوع', avatar: 'نوخذه' }];
+
+            initRoomUI();
+        }
+
+        function addBotPlayer() {
+            const botNames = ['حمد', 'ناصر', 'بدر', 'فهد', 'مشعل', 'خالد'];
+            const randomName = botNames[Math.floor(Math.random() * botNames.length)] + ' (ضيف)';
+            if (!currentRoom.players.some(p => p.name === randomName)) {
+                currentRoom.players.push({ name: randomName, avatar: 'ذيب' });
+                updatePlayersList();
+            }
+        }
+
+        function initRoomUI() {
+            document.getElementById('screen-onboarding').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
+            document.getElementById('room-info').classList.remove('hidden');
+            document.getElementById('current-room-code').innerText = currentRoom.code;
+            document.getElementById('display-room-code').innerText = currentRoom.code;
+
+            // توليد الباركود
+            document.getElementById('qrcode-container').innerHTML = '';
+            new QRCode(document.getElementById('qrcode-container'), {
+                text: window.location.href + "?room=" + currentRoom.code,
+                width: 100,
+                height: 100
+            });
+
+            updatePlayersList();
+        }
+
+        function updatePlayersList() {
+            const listContainer = document.getElementById('players-list');
+            document.getElementById('player-count').innerText = currentRoom.players.length;
+            listContainer.innerHTML = currentRoom.players.map(p => `
+                <div class="flex items-center justify-between p-2 bg-[#2C3523] rounded-lg border border-[#C9A87C]/20">
+                    <span class="font-bold text-white">${p.name}</span>
+                    <span class="text-xs gold-accent">${p.avatar}</span>
+                </div>
+            `).join('');
+        }
+
+        function startGamesMenu() {
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-games-menu').classList.remove('hidden');
+        }
+
+        function goToLobby() {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('screen-lobby').classList.remove('hidden');
+        }
+
+        function goToHome() {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('screen-onboarding').classList.remove('hidden');
+            document.getElementById('room-info').classList.add('hidden');
+        }
+
+        function selectGameMode(mode) {
+            document.getElementById('screen-games-menu').classList.add('hidden');
+            if (mode === 1) {
+                document.getElementById('game-room-1').classList.remove('hidden');
+                initGame1();
+            } else if (mode === 2) {
+                document.getElementById('game-room-2').classList.remove('hidden');
+                initGame2();
+            } else if (mode === 3) {
+                document.getElementById('game-room-3').classList.remove('hidden');
+            } else {
+                alert('قريباً جداً في التحديث القادم للديوانية!');
+                goToLobby();
+            }
+        }
+
+        // تفاصيل لعبة 1
+        const gulfWords = ['ديوانية', 'بشت', 'دلة قهوة', 'البر', 'سدو', 'غشمرة', 'خالدية', 'مبارك الكبير'];
+        function initGame1() {
+            const word = gulfWords[Math.floor(Math.random() * gulfWords.length)];
+            document.getElementById('g1-secret-word').innerText = word;
+            document.getElementById('g1-guesses-log').innerHTML = '<p class="text-gray-400">بدأت الجولة! ينتظر الربع تلميحك...</p>';
+        }
+        function submitClue() {
+            const clue = document.getElementById('g1-clue-input').value.trim();
+            if (!clue) return;
+            const log = document.getElementById('g1-guesses-log');
+            log.innerHTML += `<p class="text-white"><strong class="gold-accent">${currentUser.name}:</strong> ${clue}</p>`;
+            document.getElementById('g1-clue-input').value = '';
+        }
+        function nextRoundGame1() {
+            let r = parseInt(document.getElementById('g1-round').innerText) + 1;
+            document.getElementById('g1-round').innerText = r;
+            initGame1();
+        }
+
+        // تفاصيل لعبة 2
+        const riddles = [
+            { q: 'شيء ترسله ولا ترجعه، فما هو؟', options: ['الرسالة', 'الطيب', 'السر', 'الوقت'], ans: 0 },
+            { q: 'يتحرك بلا رجلين ولا يدخل إلا الأذنين، فما هو؟', options: ['الصوت', 'الهواء', 'الكلام', 'الظل'], ans: 2 }
+        ];
+        let currentRiddleIdx = 0;
+        function initGame2() {
+            currentRiddleIdx = 0;
+            loadRiddle();
+        }
+        function loadRiddle() {
+            if (currentRiddleIdx >= riddles.length) currentRiddleIdx = 0;
+            const r = riddles[currentRiddleIdx];
+            document.getElementById('g2-riddle-text').innerText = r.q;
+            const optBox = document.getElementById('g2-options');
+            optBox.innerHTML = r.options.map((opt, i) => `
+                <button onclick="checkRiddle(${i}, ${r.ans})" class="p-3 bg-[#2C3523] border gold-border rounded-xl font-bold text-white hover:bg-[#C9A87C] hover:text-[#1B2116] transition">${opt}</button>
+            `).join('');
+        }
+        function checkRiddle(selected, correct) {
+            if (selected === correct) {
+                alert('إجابة كفو! صحيحة');
+                let score = parseInt(document.getElementById('g2-score').innerText) + 10;
+                document.getElementById('g2-score').innerText = score;
+            } else {
+                alert('خطأ! راحت عليك النقطة');
+            }
+            currentRiddleIdx++;
+            loadRiddle();
+        }
+        function nextRiddle() {
+            currentRiddleIdx++;
+            loadRiddle();
+        }
+
+        // تفاصيل لعبة 3
+        function sendAnonMessage() {
+            const msg = document.getElementById('g3-msg-input').value.trim();
+            if (!msg) return;
+            const box = document.getElementById('g3-chat-box');
+            const fakeAliases = ['صقر الديوانية', 'الشايب', 'ذيب البر', 'مجهول رقم 1'];
+            const randomAlias = fakeAliases[Math.floor(Math.random() * fakeAliases.length)];
+            box.innerHTML += `<p class="text-white"><strong class="gold-accent">${randomAlias}:</strong> ${msg}</p>`;
+            document.getElementById('g3-msg-input').value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+    </script>
+</body>
+</html>
